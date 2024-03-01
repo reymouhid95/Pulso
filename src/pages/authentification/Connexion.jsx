@@ -39,6 +39,7 @@ const Connexion = () => {
 
       localStorage.setItem("accessToken", response.token.access);
       localStorage.setItem("refreshToken", response.token.refresh);
+      localStorage.setItem("user_id", response.user_id);
 
       // localStorage.setItem("user", JSON.stringify(response.user_id));
 

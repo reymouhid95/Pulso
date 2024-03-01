@@ -53,9 +53,9 @@ const Sondages = () => {
 
               dispatch(setToken({
                 access: newAccessToken,
-                user: refreshResponse.payload.user,
+                user_id: localStorage.getItem('user_id'),
                 expiry: refreshResponse.payload.expiry
-              }));
+              }));              
 
               if (newAccessToken) {
                 // fetchData();
