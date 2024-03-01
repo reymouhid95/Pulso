@@ -36,6 +36,9 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
+      localStorage.removeItem('user_id')
+      localStorage.removeItem('accessToken')
+      localStorage.removeItem('refreshToken')
       dispatch(logout());
       navigate("/forms");
     } catch (error) {
