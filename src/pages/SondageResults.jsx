@@ -7,7 +7,7 @@ import { useParams } from "react-router-dom";
 import LinearProgress from "@mui/material/LinearProgress";
 
 const SondageResults = () => {
-  const [loading, setLoading] = useState(true); // État pour le chargement
+  const [loading, setLoading] = useState(true);
   const [result, setResult] = useState({});
   const [question, setQuestion] = useState("");
   const token = useSelector(selectToken);
@@ -35,7 +35,7 @@ const SondageResults = () => {
 
         setResult(sondageResponse.data);
         setQuestion(sondageResponse.data.question);
-        setLoading(false); // Mettre le chargement à false une fois les données reçues
+        setLoading(false);
       } catch (error) {
         console.error("Erreur:", error);
       }
@@ -84,8 +84,6 @@ const SondageResults = () => {
       const choix = answer.choix;
       pourcentageOptions[choix] = (pourcentageOptions[choix] || 0) + 1;
     });
-  } else {
-    // console.error("Answers is not an array:", answers);
   }
 
   const totalVotes = answers ? answers.length : 0;
