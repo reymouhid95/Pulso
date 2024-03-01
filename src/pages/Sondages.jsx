@@ -49,7 +49,6 @@ const Sondages = () => {
               const refreshResponse = await dispatch(refreshAccessTokenAsync());
               const newAccessToken = refreshResponse.payload.access;
               localStorage.setItem("accessToken", newAccessToken);
-              console.log('Nouveau Token:', newAccessToken);
 
               dispatch(setToken({
                 access: newAccessToken,
@@ -64,7 +63,6 @@ const Sondages = () => {
                   Authorization: `Bearer ${newAccessToken}`,
                 },
               });
-              console.log('Reponses:', res)
 
               const userSondages = res.data.filter((survey) => {
                 return survey.owner === parseInt(userId);
@@ -79,7 +77,6 @@ const Sondages = () => {
               console.log(" Sondage Ids:", filteredSondageIds);
     
               setSondages(userSondages);
-                console.log('Token refreshing succesufully')
               } else {
                 console.error("Token pas disponible");
               }
