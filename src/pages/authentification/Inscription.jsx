@@ -1,4 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
+import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import {
@@ -14,29 +15,13 @@ const Inscription = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    password2: "",
-    tc: false,
-  });
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
+  const { register, handleSubmit, reset } = useForm();
 
-  // Soumission du formulaire pour inscrire un utilisateur
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  const onSubmit = async (data) => {
     try {
       setLoading(true);
 
-      const emailExistsResponse = await checkEmailExists(formData.email);
+      const emailExistsResponse = await checkEmailExists(data.email);
       if (emailExistsResponse && emailExistsResponse.exists) {
         toast.warning(
           "Cet email existe déjà. Veuillez utiliser un autre email."
@@ -45,22 +30,17 @@ const Inscription = () => {
       }
 
       const response = await registerUser(
-        formData.email,
-        formData.password,
-        formData.password2,
-        formData.name,
-        formData.tc
+        data.email,
+        data.password,
+        data.password2,
+        data.name,
+        data.tc
       );
 
       dispatch(setUser(response.user));
       dispatch(setToken(response.token));
-      setFormData({
-        name: "",
-        email: "",
-        password: "",
-        password2: "",
-        tc: false,
-      });
+
+      reset();
       setLoading(false);
       toast.success("Vous êtes à présent inscrit, amusez-vous!");
       setTimeout(() => {
@@ -82,15 +62,14 @@ const Inscription = () => {
         <h2 className="text-gray-500 text-3xl mb-6 font-bold text-center">
           Pulso
         </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <input
               type="text"
               id="name"
               name="name"
               placeholder="Entrer le nom"
-              value={formData.name}
-              onChange={handleChange}
+              {...register("name", { required: true })}
               className="w-full px-3 py-2 border-b border-gray-300 focus:outline-none focus:border-blue-500"
               required
             />
@@ -101,8 +80,7 @@ const Inscription = () => {
               id="email"
               name="email"
               placeholder="Entrer l'email"
-              value={formData.email}
-              onChange={handleChange}
+              {...register("email", { required: true })}
               className="w-full px-3 py-2 border-b border-gray-300 focus:outline-none focus:border-blue-500"
               required
             />
@@ -113,8 +91,7 @@ const Inscription = () => {
               id="password"
               name="password"
               placeholder="Entrer le mot de passe"
-              value={formData.password}
-              onChange={handleChange}
+              {...register("password", { required: true })}
               className="w-full px-3 py-2 border-b border-gray-300 focus:outline-none focus:border-blue-500"
               required
             />
@@ -125,8 +102,7 @@ const Inscription = () => {
               id="password2"
               name="password2"
               placeholder="Confirmer le mot de passe"
-              value={formData.password2}
-              onChange={handleChange}
+              {...register("password2", { required: true })}
               className="w-full px-3 py-2 border-b border-gray-300 focus:outline-none focus:border-blue-500"
               required
             />
@@ -136,8 +112,7 @@ const Inscription = () => {
               type="checkbox"
               id="tc"
               name="tc"
-              checked={formData.tc}
-              onChange={handleChange}
+              {...register("tc", { required: true })}
               className="mr-2"
               required
             />
