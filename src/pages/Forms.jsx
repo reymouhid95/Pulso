@@ -135,10 +135,10 @@ const Forms = () => {
       <Toaster position="top-left" />
       <div className="absolute right-5 top-28">
         <button
-          onClick={() => navigate("/share-link")}
+          onClick={() => navigate("/latest-survey")}
           className="rounded-md text-white bg-blue-500  hover:bg-blue-600 px-4 py-1 focus:outline-none focus:bg-blue-600 font-bold"
         >
-          Publier
+          Voir
         </button>
       </div>
       <form onSubmit={handleSubmit} className="mt-20">
