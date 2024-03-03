@@ -13,6 +13,7 @@ import {
   setLienSondageStockes,
   setSondageId,
 } from "../components/features/SondageSlices";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const Forms = () => {
   const [token] = useState(useSelector(selectToken));
@@ -217,7 +218,11 @@ const Forms = () => {
             className="px-4 py-2 bg-black  hover:bg-gray-800 font-bold text-white rounded"
             disabled={loading}
           >
-            {loading ? "Soumission..." : "Soumettre"}{" "}
+            {loading ? (
+              <CircularProgress size={19} thickness={4} />
+            ) : (
+              "Soumettre"
+            )}{" "}
             <ArrowForwardIcon className="ml-2" />
           </button>
         </div>
