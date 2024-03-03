@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { selectLienSondageStockes } from "../components/features/SondageSlices";
@@ -39,24 +39,22 @@ const Soumissions = () => {
           return;
         }
 
+        const headers = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+
         const response = await axios.get(
           `https://pulso-backend.onrender.com/api/sondages/${sondageId}/resultats/`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+          headers
         );
 
         setSoumissions(response.data.answers);
 
         const sondageResponse = await axios.get(
           `https://pulso-backend.onrender.com/api/sondages/${sondageId}/`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+          headers
         );
 
         setQuestion(sondageResponse.data.question);
