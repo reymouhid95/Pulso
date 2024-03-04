@@ -78,6 +78,37 @@ const Forms = () => {
     localStorage.setItem("formFields", JSON.stringify(newFields));
   };
 
+  const submitForm = async (formData) => {
+    try {
+      const owner = userId;
+
+      if (!owner) {
+        console.error(
+          "Utilisateur pas connecté, Impossible de créer le Sondage"
+        );
+        return;
+      }
+
+      formData.owner = owner;
+
+      const res = await axios.post(
+        "https://pulso-backend.onrender.com/api/sondages/",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      return res;
+    } catch (error) {
+      console.error("Error:", error);
+      throw error;
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
   
@@ -128,29 +159,25 @@ const Forms = () => {
             })
           );
   
-          if (newAccessToken) {
-            const res = await submitForm({
-              question: formTitle,
-              options: formFields.map((field) => field.value),
-            });
+          const res = await submitForm({
+            question: formTitle,
+            options: formFields.map((field) => field.value),
+          });
   
-            if (res && res.status === 201) {
-              const { slug, id: sondageId, owner: userId } = res.data;
-              const lienSondage = `https://pulso-psi.vercel.app/sondages/${slug}`;
+          if (res && res.status === 201) {
+            const { slug, id: sondageId, owner: userId } = res.data;
+            const lienSondage = `https://pulso-psi.vercel.app/sondages/${slug}`;
   
-              dispatch(setLienSondageStockes({ sondageId, lien: lienSondage, owner: userId }));
-              dispatch(setSondageId([sondageId]));
+            dispatch(setLienSondageStockes({ sondageId, lien: lienSondage, owner: userId }));
+            dispatch(setSondageId([sondageId]));
   
-              navigate(`/last-survey/${sondageId}`);
+            navigate(`/last-survey/${sondageId}`);
   
-              toast.success("Sondage créé. Vous pouvez à présent partager votre sondage !");
-              setFormTitle("");
-              setFormFields([{ type: "text", value: "", key: 0 }]);
-              localStorage.removeItem("formFields");
-              localStorage.removeItem("formTitle");
-            }
-          } else {
-            console.error("Token pas disponible");
+            toast.success("Sondage créé. Vous pouvez à présent partager votre sondage !");
+            setFormTitle("");
+            setFormFields([{ type: "text", value: "", key: 0 }]);
+            localStorage.removeItem("formFields");
+            localStorage.removeItem("formTitle");
           }
         } catch (refreshError) {
           console.error("Erreur lors du rafraîchissement du token:", refreshError);
@@ -163,38 +190,6 @@ const Forms = () => {
     }
   };
   
-
-  const submitForm = async (formData) => {
-    try {
-      const owner = userId;
-
-      if (!owner) {
-        console.error(
-          "Utilisateur pas connecté, Impossible de créer le Sondage"
-        );
-        return;
-      }
-
-      formData.owner = owner;
-
-      const res = await axios.post(
-        "https://pulso-backend.onrender.com/api/sondages/",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      return res;
-    } catch (error) {
-      console.error("Error:", error);
-      throw error;
-    }
-  };
-
   return (
     <div className="flex items-center justify-center mt-40 font-sans">
       <Toaster position="top-left" />
@@ -247,7 +242,7 @@ const Forms = () => {
             />
           </div>
         ))}
-
+  
         <div className="flex justify-center">
           <button
             type="submit"
