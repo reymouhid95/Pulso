@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
-import LinearProgress from "@mui/material/LinearProgress";
 import { CircularProgress } from "@mui/material";
 import { Toaster, toast } from "sonner";
 
@@ -15,12 +14,10 @@ const SondageVote = () => {
   });
   const [selectedOption, setSelectedOption] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [isLoader, setIsLoader] = useState(false);
 
   useEffect(() => {
     const fetchSondageDetails = async () => {
       try {
-        setIsLoader(true);
         const response = await axios.get(
           `https://pulso-backend.onrender.com/api/sondages/${slug}`
         );
@@ -33,7 +30,6 @@ const SondageVote = () => {
       } catch (error) {
         console.error("Erreur:", error);
         setSondageDetails(null);
-        setIsLoader(false);
       }
     };
 
@@ -69,6 +65,7 @@ const SondageVote = () => {
         }, 2000);
       } else {
         console.error("Erreur lors du vote");
+        toast.error("Une erreur s'est produite lors de votre vote.");
       }
     } catch (error) {
       console.error("Erreur lors du vote:", error);
@@ -81,7 +78,6 @@ const SondageVote = () => {
 
   return (
     <div className="text-center mt-40 font-sans">
-      {isLoader && <LinearProgress />}
       <Toaster position="top-left" />
       <h1 className="text-gray-500 text-4xl font-black mb-10 text-center">
         {question}
