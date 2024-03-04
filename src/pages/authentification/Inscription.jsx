@@ -26,6 +26,13 @@ const Inscription = () => {
         toast.warning(
           "Cet email existe déjà. Veuillez utiliser un autre email."
         );
+        setLoading(false);
+        return;
+      }
+
+      if (data.password !== data.password2) {
+        toast.error("Les mots de passe ne correspondent pas.");
+        setLoading(false);
         return;
       }
 
