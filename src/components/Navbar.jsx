@@ -1,10 +1,9 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useRef, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout, selectToken } from "../components/features/AuthSlice";
 import { Toaster, toast } from "sonner";
-
-
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -12,15 +11,8 @@ const Navbar = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
   const navigate = useNavigate();
-  const [currentImage, setCurrentImage] = useState('');
-  const username = localStorage.getItem('username')
+  const username = localStorage.getItem("username");
 
-  
-
-
-
-
-  // Ajouter un écouteur d'événements sur le document pour fermer le menu au clic en dehors du composant
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -45,15 +37,15 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      localStorage.removeItem('user_id')
-      localStorage.removeItem('accessToken')
-      localStorage.removeItem('refreshToken')
-      localStorage.removeItem('username')
+      localStorage.removeItem("user_id");
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("username");
       dispatch(logout());
       navigate("/forms");
     } catch (error) {
       console.error("Erreur lors de la déconnexion:", error);
-      toast.warning(
+      toast.error(
         "VOus n'avez pas pu vous déconnecter. Vérifiez votre connexion internet !"
       );
     }
@@ -111,11 +103,9 @@ const Navbar = () => {
               Créer un formulaire
             </button>
           </NavLink>
-              <div >
-        <p className="font-bold mx-4">{username}</p>
-     
-    </div>
-          
+          <div>
+            <p className="font-bold text-gray-400">{username}</p>
+          </div>
         </div>
         <div className="md:hidden flex items-center ref={menuRef}">
           <button
@@ -165,12 +155,11 @@ const Navbar = () => {
                   Créer un formulaire
                 </button>
               </NavLink>
-              <div className="w-44 px-4 py-2 flex items-center justify-between mx-24">
-              <p className="font-bold mx-12">{username}</p>
-              
+              <div className="text-center">
+                <p className="font-bold text-gray-400">{username}</p>
               </div>
             </div>
-          )} 
+          )}
         </div>
       </nav>
     </>
