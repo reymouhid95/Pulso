@@ -79,18 +79,18 @@ const Sondages = () => {
             "Aucun sondage à afficher. Veuillez créer d'abord vos sondages pour qu'ils puissent s'afficher ici !"}
         </div>
       )}
-      <div className="flex flex-wrap justify-center gap-4 cursor-pointer">
+      <div className="flex flex-wrap align-center justify-center gap-4 cursor-pointer mt-40">
         {sondages.map((sondage) => (
           <div
             key={sondage.id}
-            className="rounded-lg overflow-hidden shadow-lg bg-white m-2 w-72 text-center"
+            className="rounded-lg overflow-hidden shadow-lg bg-white m-2 w-full text-center"
             onClick={() => handleClick(sondage.id)}
           >
             <div className="px-6 py-4">
-              <div className="font-bold text-xl mb-2 py-3 bg-slate-500 text-white ">
+              <div className="font-bold text-xl text-center mb-2 py-3 bg-slate-500 text-white ">
                 {sondage.question}
               </div>
-              <ol className="text-gray-400 font-bold hover:text-gray-600 text-start px-5">
+              <ol className="text-gray-400 font-bold hover:text-gray-600 text-center px-5">
                 {sondage.options.map((option, index) => (
                   <li key={index}>{`${index + 1}. ${option}`}</li>
                 ))}
