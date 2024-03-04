@@ -76,7 +76,7 @@ const SondageVote = () => {
   return (
     <div className="text-center mt-40 font-sans">
       <Toaster position="top-left" />
-      <h1 className="text-gray-500 text-4xl font-black mb-10 text-center">
+      <h1 className="text-gray-500 text-4xl font-bold mb-10 text-center">
         {question}
       </h1>
       <ul className="list-none">
