@@ -1,8 +1,14 @@
-import  { useState, useEffect } from "react";
+/* eslint-disable no-unused-vars */
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { selectLienSondageStockes } from "../components/features/SondageSlices";
-import { refreshAccessTokenAsync, selectToken, selectUserId } from "../components/features/AuthSlice";
+import {
+  refreshAccessTokenAsync,
+  selectToken,
+  selectUserId,
+  setToken,
+} from "../components/features/AuthSlice";
 import AllInOne from "./AllInOne";
 import { useParams } from "react-router-dom";
 import LinearProgress from "@mui/material/LinearProgress";
@@ -17,7 +23,7 @@ const Soumissions = () => {
   const dispatch = useDispatch();
 
   const { sondageId } = useParams();
-  console.log("ID du Sondage :", sondageId);
+  // console.log("ID du Sondage :", sondageId);
 
   useEffect(() => {
     const fetchSubmissions = async () => {
@@ -35,10 +41,10 @@ const Soumissions = () => {
           (s) => s.sondageId == sondageId
         );
 
-        if (!sondage || sondage.owner !== user_id) {
-          console.log("Sondage non trouvé ou non autorisé");
-          return;
-        }
+        // if (!sondage || sondage.owner !== user_id) {
+        console.log(sondage);
+        //   return;
+        // }
 
         const headers = {
           headers: {
@@ -61,9 +67,18 @@ const Soumissions = () => {
 
           setQuestion(sondageResponse.data.question);
         } catch (error) {
-          if (error.response && error.response.status === 401) {
+          if (error.response.status === 401) {
             const refreshResponse = await dispatch(refreshAccessTokenAsync());
             const newAccessToken = refreshResponse.payload.access;
+            localStorage.setItem("accessToken", newAccessToken);
+
+            dispatch(
+              setToken({
+                access: newAccessToken,
+                user_id: localStorage.getItem("user_id"),
+                expiry: refreshResponse.payload.expiry,
+              })
+            );
 
             if (newAccessToken) {
               headers.headers.Authorization = `Bearer ${newAccessToken}`;
@@ -129,7 +144,7 @@ const Soumissions = () => {
   ));
 
   return (
-    <div className="flex align-center text-center gap-12 justify-center mb-12 flex-col">
+    <div className="flex align-center text-center gap-12 justify-center mb-12 flex-col font-sans">
       <AllInOne />
       <h1 className="text-gray-500 text-4xl font-black my-10 text-center">
         {question}
@@ -137,8 +152,12 @@ const Soumissions = () => {
       <table className="flex flex-col items-center bg-white border border-gray-300">
         <thead>
           <tr>
-            <th className="py-2 px-4 border-b border-r">Created At</th>
-            <th className="py-2 px-4 border-b">Choix</th>
+            <th className="py-2 px-20 border-b text-gray-500 font-bold">
+              Créé le
+            </th>
+            <th className="py-2 px-12 border-b text-gray-500 font-bold">
+              Choix
+            </th>
           </tr>
         </thead>
         <tbody>{tableRows}</tbody>

@@ -23,7 +23,9 @@ const PageAfterVote = () => {
       <h2 className="text-gray-500 text-4xl font-black mb-6 mt-40">
         Merci d&apos;avoir voté !
       </h2>
-      <p className="text-lg mb-6">Vous pouvez créer un formulaire ici :</p>
+      <p className="text-2xl mb-6 text-gray-400">
+        Vous pouvez créer un formulaire ici :
+      </p>
       <Link
         to="/forms"
         className="bg-blue-500 text-white px-4 py-2 rounded-md font-bold hover:bg-blue-700 transition duration-300"
