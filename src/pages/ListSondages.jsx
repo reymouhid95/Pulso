@@ -1,9 +1,15 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { refreshAccessTokenAsync, selectToken, selectUserId, setToken } from "../components/features/AuthSlice";
+import {
+  refreshAccessTokenAsync,
+  selectToken,
+  selectUserId,
+  setToken,
+} from "../components/features/AuthSlice";
 import { useNavigate } from "react-router-dom";
 import { selectLienSondageStockes } from "../components/features/SondageSlices";
+import LinearProgress from "@mui/material/LinearProgress";
 
 const ListSondages = () => {
   const [sondages, setSondages] = useState([]);
@@ -15,9 +21,6 @@ const ListSondages = () => {
   const userId = useSelector(selectUserId);
   const lienSondagesStockes = useSelector(selectLienSondageStockes);
   const dispatch = useDispatch();
-
-
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -63,25 +66,30 @@ const ListSondages = () => {
 
               if (newAccessToken) {
                 // fetchData();
-                const res = await axios.get("https://pulso-backend.onrender.com/api/sondages/", {
-                headers: {
-                  Authorization: `Bearer ${newAccessToken}`,
-                },
-              });
+                const res = await axios.get(
+                  "https://pulso-backend.onrender.com/api/sondages/",
+                  {
+                    headers: {
+                      Authorization: `Bearer ${newAccessToken}`,
+                    },
+                  }
+                );
 
-              const userSondages = res.data.filter((survey) => {
-                return survey.owner === parseInt(userId);
-              });
-    
-              const filteredSondageIds = lienSondagesStockes
-                .filter((s) =>
-                  userSondages.map((sondage) => sondage.id).includes(s.sondageId)
-                )
-                .map((s) => s.sondageId);
-    
-              console.log(" Sondage Ids:", filteredSondageIds);
-    
-              setSondages(userSondages);
+                const userSondages = res.data.filter((survey) => {
+                  return survey.owner === parseInt(userId);
+                });
+
+                const filteredSondageIds = lienSondagesStockes
+                  .filter((s) =>
+                    userSondages
+                      .map((sondage) => sondage.id)
+                      .includes(s.sondageId)
+                  )
+                  .map((s) => s.sondageId);
+
+                console.log(" Sondage Ids:", filteredSondageIds);
+
+                setSondages(userSondages);
               } else {
                 console.error("Token pas disponible");
               }
@@ -118,9 +126,9 @@ const ListSondages = () => {
     navigate(`/resultats/${sondageId}`);
   };
 
-
   return (
     <div className="mt-10 md:mt-30 text-start ms-20 font-bold ">
+      {loading && <LinearProgress className="mt-20" />}
       <hr className="pb-4" />
       {sondages.map((survey) => (
         <div

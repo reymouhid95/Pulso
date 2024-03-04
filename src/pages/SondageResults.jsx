@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { refreshAccessTokenAsync, selectToken, selectUserId } from "../components/features/AuthSlice";
+import {
+  refreshAccessTokenAsync,
+  selectToken,
+  selectUserId,
+} from "../components/features/AuthSlice";
 import AllInOne from "./AllInOne";
 import { useParams } from "react-router-dom";
 import LinearProgress from "@mui/material/LinearProgress";
@@ -40,10 +44,10 @@ const SondageResults = () => {
         const Votes = await axios.get(
           `https://pulso-backend.onrender.com/api/sondages/${sondageId}/resultats/`,
           headers
-          );
-          setVotes(Votes.data.answers);
-          console.log("Nombre de votes", Votes.data.answers.length)
-          setLoading(false);
+        );
+        setVotes(Votes.data.answers);
+        console.log("Nombre de votes", Votes.data.answers.length);
+        setLoading(false);
 
         setResult(sondageResponse.data);
         setQuestion(sondageResponse.data.question);
@@ -65,10 +69,10 @@ const SondageResults = () => {
             const Votes = await axios.get(
               `https://pulso-backend.onrender.com/api/sondages/${sondageId}/resultats/`,
               headers
-              );
-              setVotes(Votes.data);
-              console.log(Votes.data.answers)
-              setLoading(false);
+            );
+            setVotes(Votes.data);
+            console.log(Votes.data.answers);
+            setLoading(false);
 
             const sondageResponse = await axios.get(
               `https://pulso-backend.onrender.com/api/sondages/${sondageId}/`,
@@ -101,7 +105,6 @@ const SondageResults = () => {
 
   if (loading) {
     return (
-      // Afficher le loader pendant le chargement
       <div>
         <AllInOne />
         <LinearProgress />
@@ -169,8 +172,9 @@ const SondageResults = () => {
           {question}
         </h1>
         <div className="options-container">{graphiqueOptionBar}</div>
-
-        <h3 className="text-gray-500 text-4xl font-black mt-20 text-center">Nombre de Votes : {votes.length}</h3>
+        <h3 className="text-gray-500 text-4xl font-black mt-12 text-center">
+          Nombre de Votes : {votes.length}
+        </h3>
       </div>
     </div>
   );
