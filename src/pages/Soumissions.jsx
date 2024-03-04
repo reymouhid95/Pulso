@@ -23,7 +23,6 @@ const Soumissions = () => {
   const dispatch = useDispatch();
 
   const { sondageId } = useParams();
-  // console.log("ID du Sondage :", sondageId);
 
   useEffect(() => {
     const fetchSubmissions = async () => {
@@ -40,11 +39,7 @@ const Soumissions = () => {
         const sondage = lienSondagesStockes.find(
           (s) => s.sondageId == sondageId
         );
-
-        // if (!sondage || sondage.owner !== user_id) {
         console.log(sondage);
-        //   return;
-        // }
 
         const headers = {
           headers: {
