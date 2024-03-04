@@ -1,28 +1,23 @@
 import { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { selectToken, selectUserId, refreshAccessTokenAsync } from "../components/features/AuthSlice";
+import { useSelector } from "react-redux";
+import { selectToken, selectUserId } from "../components/features/AuthSlice";
 import { selectLienSondageStockes } from "../components/features/SondageSlices";
 import { Toaster, toast } from "sonner";
 import AllInOne from "./AllInOne";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import LinearProgress from "@mui/material/LinearProgress";
 
 const ShareLink = () => {
   const token = useSelector(selectToken);
   const userId = useSelector(selectUserId);
   const liensSondages = useSelector(selectLienSondageStockes);
   const [copiedIndex, setCopiedIndex] = useState(null);
-  const [question, setQuestion] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [question, setQuestion] = useState(""); 
   const { sondageId } = useParams();
-  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchQuestion = async () => {
       try {
-        setLoading(true);
-
         if (!token || !sondageId) {
           console.log(
             "Pas de Token ou de sondageId. Impossible de voir les resultats"
@@ -30,54 +25,29 @@ const ShareLink = () => {
           return;
         }
 
-        const headers = {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        };
-
         const sondageResponse = await axios.get(
           `https://pulso-backend.onrender.com/api/sondages/${sondageId}/`,
-          headers
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
 
         setQuestion(sondageResponse.data.question);
-        setLoading(false);
       } catch (error) {
         console.error("Erreur:", error);
-
-        if (error.response && error.response.status === 401) {
-          const refreshResponse = await dispatch(refreshAccessTokenAsync());
-          const newAccessToken = refreshResponse.payload.access;
-
-          if (newAccessToken) {
-            const headers = {
-              headers: {
-                Authorization: `Bearer ${newAccessToken}`,
-              },
-            };
-
-            const sondageResponse = await axios.get(
-              `https://pulso-backend.onrender.com/api/sondages/${sondageId}/`,
-              headers
-            );
-
-            setQuestion(sondageResponse.data.question);
-            setLoading(false);
-          } else {
-            console.error("Erreur de rafraichissement du token");
-            setLoading(false);
-          }
-        }
       }
     };
 
     fetchQuestion();
-  }, [token, sondageId, dispatch]);
+  }, [token, sondageId]);
 
   const userLiensSondages = liensSondages.filter(
     (lien) => lien.owner == userId && lien.sondageId == sondageId
   );
+
+  console.log(userLiensSondages)
 
   const handleCopy = (lien, index) => {
     if (lien && token) {
@@ -88,8 +58,12 @@ const ShareLink = () => {
         setCopiedIndex(null);
       }, 1500);
     } else {
-      console.error("Utilisateur pas authentifié ou pas de lien disponible");
-      toast.error("Utilisateur pas authentifié ou pas de lien disponible!");
+      console.error(
+        "Utilisateur pas authentifié ou pas de lien disponible"
+      );
+      toast.error(
+        "Utilisateur pas authentifié ou pas de lien disponible!"
+      );
     }
   };
 
@@ -97,14 +71,10 @@ const ShareLink = () => {
     <div>
       <AllInOne />
       <div className="mt-40 font-sans">
-        <h1 className="text-gray-500 text-4xl font-black mb-10 text-center">
-          {question}
-        </h1>
+        <h1 className="text-2xl text-center font-bold mb-4">{question}</h1>
         <div className="mt-10 flex items-center justify-center">
           <Toaster position="top-left" />
-          {loading ? (
-            <LinearProgress />
-          ) : userLiensSondages.length > 0 && token ? (
+          {userLiensSondages.length > 0 && token ? (
             <div>
               {userLiensSondages.map((lien, index) => (
                 <div key={index} className="mb-4">
@@ -128,7 +98,7 @@ const ShareLink = () => {
             </div>
           ) : (
             <p className="text-center text-gray-400 text-2xl font-bold">
-              Pas de lien disponible. Créez un sondage avant.
+              Pas de lien disponible. Créez un sondage ou connectez-vous.
             </p>
           )}
         </div>
