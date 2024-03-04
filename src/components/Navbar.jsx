@@ -4,7 +4,6 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout, selectToken } from "../components/features/AuthSlice";
 import { Toaster, toast } from "sonner";
-import Photos from "../assets/photos.png";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -12,7 +11,6 @@ const Navbar = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
   const navigate = useNavigate();
-  const [currentImage, setCurrentImage] = useState("");
   const username = localStorage.getItem("username");
 
   useEffect(() => {
