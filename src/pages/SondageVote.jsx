@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
-import LinearProgress from "@mui/material/LinearProgress";
 import { CircularProgress } from "@mui/material";
 import { Toaster, toast } from "sonner";
 
@@ -60,12 +59,10 @@ const SondageVote = () => {
 
       // Vérifier la réponse du serveur
       if (response.status === 201) {
-        toast.success("Merci pour votre vote!");
-        setTimeout(() => {
-          navigate("/pageaftervote");
-        }, 2000);
+        navigate("/pageaftervote");
       } else {
         console.error("Erreur lors du vote");
+        toast.error("Une erreur s'est produite lors de votre vote.");
       }
     } catch (error) {
       console.error("Erreur lors du vote:", error);
@@ -73,10 +70,6 @@ const SondageVote = () => {
       setIsLoading(false);
     }
   };
-
-  if (!sondageDetails) {
-    return <div>Loading...</div>;
-  }
 
   const { question, options } = sondageDetails;
 
@@ -111,7 +104,6 @@ const SondageVote = () => {
       >
         {isLoading ? <CircularProgress size={20} /> : "Voter"}
       </button>
-      {isLoading && <LinearProgress />}
     </div>
   );
 };
