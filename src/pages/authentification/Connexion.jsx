@@ -31,6 +31,7 @@ const Connexion = () => {
       localStorage.setItem("accessToken", response.token.access);
       localStorage.setItem("refreshToken", response.token.refresh);
       localStorage.setItem("user_id", response.user_id);
+      localStorage.setItem("username", response.username);
 
       reset(); // Réinitialise le formulaire après soumission
       setLoading(false);
