@@ -12,7 +12,7 @@ const ShareLink = () => {
   const userId = useSelector(selectUserId);
   const liensSondages = useSelector(selectLienSondageStockes);
   const [copiedIndex, setCopiedIndex] = useState(null);
-  const [question, setQuestion] = useState(""); 
+  const [question, setQuestion] = useState("");
   const { sondageId } = useParams();
 
   useEffect(() => {
@@ -47,7 +47,7 @@ const ShareLink = () => {
     (lien) => lien.owner == userId && lien.sondageId == sondageId
   );
 
-  console.log(userLiensSondages)
+  console.log(userLiensSondages);
 
   const handleCopy = (lien, index) => {
     if (lien && token) {
@@ -58,12 +58,8 @@ const ShareLink = () => {
         setCopiedIndex(null);
       }, 1500);
     } else {
-      console.error(
-        "Utilisateur pas authentifié ou pas de lien disponible"
-      );
-      toast.error(
-        "Utilisateur pas authentifié ou pas de lien disponible!"
-      );
+      console.error("Utilisateur pas authentifié ou pas de lien disponible");
+      toast.error("Utilisateur pas authentifié ou pas de lien disponible!");
     }
   };
 
@@ -71,7 +67,9 @@ const ShareLink = () => {
     <div>
       <AllInOne />
       <div className="mt-40 font-sans">
-        <h1 className="text-2xl text-center font-bold mb-4">{question}</h1>
+        <h1 className="text-gray-500 text-4xl text-center font-bold mb-4">
+          {question}
+        </h1>
         <div className="mt-10 flex items-center justify-center">
           <Toaster position="top-left" />
           {userLiensSondages.length > 0 && token ? (
