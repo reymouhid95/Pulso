@@ -5,7 +5,12 @@ import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { useSelector } from "react-redux";
-import { refreshAccessTokenAsync, selectToken, selectUserId, setToken } from "../components/features/AuthSlice";
+import {
+  refreshAccessTokenAsync,
+  selectToken,
+  selectUserId,
+  setToken,
+} from "../components/features/AuthSlice";
 import { useNavigate } from "react-router-dom";
 import { Toaster, toast } from "sonner";
 import { useDispatch } from "react-redux";
@@ -22,6 +27,7 @@ const Forms = () => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const [lastFieldIndex, setLastFieldIndex] = useState(0);
+  const [hoveredIndex, setHoveredIndex] = useState(null);
 
   const [formFields, setFormFields] = useState(
     JSON.parse(localStorage.getItem("formFields")) || [
@@ -76,50 +82,66 @@ const Forms = () => {
       setLastFieldIndex(0);
     }
     localStorage.setItem("formFields", JSON.stringify(newFields));
+
+    if (index === 0) {
+      const deleteButton = document.getElementById(`delete-button-${index}`);
+      if (deleteButton) {
+        deleteButton.disabled = true;
+      }
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     if (!token) {
-      toast.warning("Veuillez vous identifier avant de pouvoir créer un sondage");
+      toast.warning(
+        "Veuillez vous identifier avant de pouvoir créer un sondage"
+      );
       setTimeout(() => {
         navigate("/connexion");
       }, 2000);
       return;
     }
-  
+
     try {
       setLoading(true);
       const res = await submitForm({
         question: formTitle,
         options: formFields.map((field) => field.value),
       });
-  
+
       if (res && res.status === 201) {
         const { slug, id: sondageId, owner: userId } = res.data;
         const lienSondage = `https://pulso-psi.vercel.app/sondages/${slug}`;
-  
-        dispatch(setLienSondageStockes({ sondageId, lien: lienSondage, owner: userId }));
+
+        dispatch(
+          setLienSondageStockes({ sondageId, lien: lienSondage, owner: userId })
+        );
         dispatch(setSondageId([sondageId]));
-  
+
         navigate(`/last-survey/${sondageId}`);
-  
-        toast.success("Sondage créé. Vous pouvez à présent partager votre sondage !");
+
+        toast.success(
+          "Sondage créé. Vous pouvez à présent partager votre sondage !"
+        );
         setFormTitle("");
         setFormFields([{ type: "text", value: "", key: 0 }]);
         localStorage.removeItem("formFields");
         localStorage.removeItem("formTitle");
       }
     } catch (error) {
-      console.error("Error:", error.response ? error.response.data : error.message);
-  
+      console.error(
+        "Error:",
+        error.response ? error.response.data : error.message
+      );
+
       if (error.response.status === 401) {
         try {
           const refreshResponse = await dispatch(refreshAccessTokenAsync());
           const newAccessToken = refreshResponse.payload.access;
           localStorage.setItem("accessToken", newAccessToken);
-  
+
           dispatch(
             setToken({
               access: newAccessToken,
@@ -127,23 +149,31 @@ const Forms = () => {
               expiry: refreshResponse.payload.expiry,
             })
           );
-  
+
           if (newAccessToken) {
             const res = await submitForm({
               question: formTitle,
               options: formFields.map((field) => field.value),
             });
-  
+
             if (res && res.status === 201) {
               const { slug, id: sondageId, owner: userId } = res.data;
               const lienSondage = `https://pulso-psi.vercel.app/sondages/${slug}`;
-  
-              dispatch(setLienSondageStockes({ sondageId, lien: lienSondage, owner: userId }));
+
+              dispatch(
+                setLienSondageStockes({
+                  sondageId,
+                  lien: lienSondage,
+                  owner: userId,
+                })
+              );
               dispatch(setSondageId([sondageId]));
-  
+
               navigate(`/last-survey/${sondageId}`);
-  
-              toast.success("Sondage créé. Vous pouvez à présent partager votre sondage !");
+
+              toast.success(
+                "Sondage créé. Vous pouvez à présent partager votre sondage !"
+              );
               setFormTitle("");
               setFormFields([{ type: "text", value: "", key: 0 }]);
               localStorage.removeItem("formFields");
@@ -153,7 +183,10 @@ const Forms = () => {
             console.error("Token pas disponible");
           }
         } catch (refreshError) {
-          console.error("Erreur lors du rafraîchissement du token:", refreshError);
+          console.error(
+            "Erreur lors du rafraîchissement du token:",
+            refreshError
+          );
         } finally {
           setLoading(false);
         }
@@ -162,7 +195,6 @@ const Forms = () => {
       }
     }
   };
-  
 
   const submitForm = async (formData) => {
     try {
@@ -198,8 +230,7 @@ const Forms = () => {
   return (
     <div className="flex items-center justify-center mt-40 font-sans">
       <Toaster position="top-left" />
-      <div className="absolute right-5 top-28">
-      </div>
+      <div className="absolute right-5 top-28"></div>
       <form onSubmit={handleSubmit} className="mt-20">
         <div className="mb-4">
           <textarea
@@ -211,22 +242,27 @@ const Forms = () => {
               setFormTitle(e.target.value);
               localStorage.setItem("formTitle", e.target.value);
             }}
+            onKeyDown={handleTextareaSubmit}
           ></textarea>
         </div>
         {formFields.map((field, index) => (
-          <div key={field.key} className="flex items-center mb-4">
-            <div className="ml-2 flex">
-              {index !== 0 && (
+          <div
+            key={field.key}
+            className="flex items-center mb-4 relative"
+            onMouseEnter={() => setHoveredIndex(index)}
+            onMouseLeave={() => setHoveredIndex(null)}
+          >
+            {hoveredIndex === index && (
+              <div className="ml-2 flex">
                 <button
+                  id={`delete-button-${field.key}`}
                   type="button"
                   onClick={() => removeField(field.key)}
                   className="px-2 py-1 mr-1 rounded text-gray-500"
+                  disabled={index === 0}
                 >
                   <DeleteIcon />
                 </button>
-              )}
-              {(index === lastFieldIndex ||
-                index === formFields.length - 1) && (
                 <button
                   type="button"
                   onClick={addField}
@@ -234,8 +270,8 @@ const Forms = () => {
                 >
                   <AddRoundedIcon />
                 </button>
-              )}
-            </div>
+              </div>
+            )}
             <input
               ref={index === lastFieldIndex ? inputRef : null}
               type={field.type}
@@ -251,7 +287,9 @@ const Forms = () => {
         <div className="flex justify-center">
           <button
             type="submit"
-            className="px-4 py-2 bg-black  hover:bg-gray-800 font-bold text-white rounded"
+            className={`px-4 py-2 bg-black  hover:bg-gray-800 font-bold text-white rounded-md ${
+              loading ? "text-gray-200" : ""
+            }`}
             disabled={loading}
           >
             {loading ? (
