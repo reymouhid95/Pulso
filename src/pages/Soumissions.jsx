@@ -1,8 +1,8 @@
 import  { useState, useEffect } from "react";
 import axios from "axios";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectLienSondageStockes } from "../components/features/SondageSlices";
-import { selectToken, selectUserId } from "../components/features/AuthSlice";
+import { refreshAccessTokenAsync, selectToken, selectUserId } from "../components/features/AuthSlice";
 import AllInOne from "./AllInOne";
 import { useParams } from "react-router-dom";
 import LinearProgress from "@mui/material/LinearProgress";
@@ -14,6 +14,7 @@ const Soumissions = () => {
   const token = useSelector(selectToken);
   const user_id = useSelector(selectUserId);
   const lienSondagesStockes = useSelector(selectLienSondageStockes);
+  const dispatch = useDispatch();
 
   const { sondageId } = useParams();
   console.log("ID du Sondage :", sondageId);
@@ -45,19 +46,47 @@ const Soumissions = () => {
           },
         };
 
-        const response = await axios.get(
-          `https://pulso-backend.onrender.com/api/sondages/${sondageId}/resultats/`,
-          headers
-        );
+        try {
+          const response = await axios.get(
+            `https://pulso-backend.onrender.com/api/sondages/${sondageId}/resultats/`,
+            headers
+          );
 
-        setSoumissions(response.data.answers);
+          setSoumissions(response.data.answers);
 
-        const sondageResponse = await axios.get(
-          `https://pulso-backend.onrender.com/api/sondages/${sondageId}/`,
-          headers
-        );
+          const sondageResponse = await axios.get(
+            `https://pulso-backend.onrender.com/api/sondages/${sondageId}/`,
+            headers
+          );
 
-        setQuestion(sondageResponse.data.question);
+          setQuestion(sondageResponse.data.question);
+        } catch (error) {
+          if (error.response && error.response.status === 401) {
+            const refreshResponse = await dispatch(refreshAccessTokenAsync());
+            const newAccessToken = refreshResponse.payload.access;
+
+            if (newAccessToken) {
+              headers.headers.Authorization = `Bearer ${newAccessToken}`;
+              const response = await axios.get(
+                `https://pulso-backend.onrender.com/api/sondages/${sondageId}/resultats/`,
+                headers
+              );
+
+              setSoumissions(response.data.answers);
+
+              const sondageResponse = await axios.get(
+                `https://pulso-backend.onrender.com/api/sondages/${sondageId}/`,
+                headers
+              );
+
+              setQuestion(sondageResponse.data.question);
+            } else {
+              console.error("Erreur lors du rafraichissement du token");
+            }
+          } else {
+            console.error("Erreur:", error);
+          }
+        }
       } catch (error) {
         console.error("Erreur:", error);
       } finally {
@@ -66,7 +95,7 @@ const Soumissions = () => {
     };
 
     fetchSubmissions();
-  }, [sondageId, token, user_id, lienSondagesStockes]);
+  }, [sondageId, token, user_id, lienSondagesStockes, dispatch]);
 
   if (loading) {
     return (
