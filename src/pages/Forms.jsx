@@ -27,6 +27,7 @@ const Forms = () => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const [lastFieldIndex, setLastFieldIndex] = useState(0);
+  const [hoveredIndex, setHoveredIndex] = useState(null);
 
   const [formFields, setFormFields] = useState(
     JSON.parse(localStorage.getItem("formFields")) || [
@@ -81,6 +82,13 @@ const Forms = () => {
       setLastFieldIndex(0);
     }
     localStorage.setItem("formFields", JSON.stringify(newFields));
+
+    if (index === 0) {
+      const deleteButton = document.getElementById(`delete-button-${index}`);
+      if (deleteButton) {
+        deleteButton.disabled = true;
+      }
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -234,22 +242,27 @@ const Forms = () => {
               setFormTitle(e.target.value);
               localStorage.setItem("formTitle", e.target.value);
             }}
+            onKeyDown={handleTextareaSubmit}
           ></textarea>
         </div>
         {formFields.map((field, index) => (
-          <div key={field.key} className="flex items-center mb-4">
-            <div className="ml-2 flex">
-              {index !== 0 && (
+          <div
+            key={field.key}
+            className="flex items-center mb-4 relative"
+            onMouseEnter={() => setHoveredIndex(index)}
+            onMouseLeave={() => setHoveredIndex(null)}
+          >
+            {hoveredIndex === index && (
+              <div className="ml-2 flex">
                 <button
+                  id={`delete-button-${field.key}`}
                   type="button"
                   onClick={() => removeField(field.key)}
                   className="px-2 py-1 mr-1 rounded text-gray-500"
+                  disabled={index === 0}
                 >
                   <DeleteIcon />
                 </button>
-              )}
-              {(index === lastFieldIndex ||
-                index === formFields.length - 1) && (
                 <button
                   type="button"
                   onClick={addField}
@@ -257,8 +270,8 @@ const Forms = () => {
                 >
                   <AddRoundedIcon />
                 </button>
-              )}
-            </div>
+              </div>
+            )}
             <input
               ref={index === lastFieldIndex ? inputRef : null}
               type={field.type}
