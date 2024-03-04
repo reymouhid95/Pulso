@@ -108,6 +108,9 @@ const Forms = () => {
         );
         dispatch(setSondageId([sondageId]));
 
+        navigate(`/last-survey/${sondageId}`);
+
+
         toast.success(
           "Sondage créé. Vous pouvez à présent partager votre sondage !"
         );
@@ -161,12 +164,6 @@ const Forms = () => {
     <div className="flex items-center justify-center mt-40 font-sans">
       <Toaster position="top-left" />
       <div className="absolute right-5 top-28">
-        <button
-          onClick={() => navigate("/latest-survey")}
-          className="rounded-md text-white bg-blue-500  hover:bg-blue-600 px-4 py-1 focus:outline-none focus:bg-blue-600 font-bold"
-        >
-          Voir
-        </button>
       </div>
       <form onSubmit={handleSubmit} className="mt-20">
         <div className="mb-4">
