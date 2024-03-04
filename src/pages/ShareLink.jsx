@@ -76,12 +76,7 @@ const ShareLink = () => {
             <div>
               {userLiensSondages.map((lien, index) => (
                 <div key={index} className="mb-4">
-                  <input
-                    value={lien.lien}
-                    disabled
-                    className="p-3 ms-5"
-                    style={{ minWidth: "430px" }}
-                  />
+                  <input value={lien.lien} disabled className="p-3 ms-5" />
                   <button
                     onClick={() => handleCopy(lien.lien, index)}
                     className={`ml-2 bg-slate-600 text-white px-4 py-1 rounded-md ${
