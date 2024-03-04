@@ -2,7 +2,7 @@ import  { useState, useEffect } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { selectLienSondageStockes } from "../components/features/SondageSlices";
-import { refreshAccessTokenAsync, selectToken, selectUserId } from "../components/features/AuthSlice";
+import { refreshAccessTokenAsync, selectToken, selectUserId, setToken } from "../components/features/AuthSlice";
 import AllInOne from "./AllInOne";
 import { useParams } from "react-router-dom";
 import LinearProgress from "@mui/material/LinearProgress";
@@ -17,7 +17,7 @@ const Soumissions = () => {
   const dispatch = useDispatch();
 
   const { sondageId } = useParams();
-  console.log("ID du Sondage :", sondageId);
+  // console.log("ID du Sondage :", sondageId);
 
   useEffect(() => {
     const fetchSubmissions = async () => {
@@ -35,10 +35,10 @@ const Soumissions = () => {
           (s) => s.sondageId == sondageId
         );
 
-        if (!sondage || sondage.owner !== user_id) {
-          console.log("Sondage non trouvé ou non autorisé");
-          return;
-        }
+        // if (!sondage || sondage.owner !== user_id) {
+          console.log(sondage);
+        //   return;
+        // }
 
         const headers = {
           headers: {
@@ -61,9 +61,19 @@ const Soumissions = () => {
 
           setQuestion(sondageResponse.data.question);
         } catch (error) {
-          if (error.response && error.response.status === 401) {
+          if ( error.response.status === 401) {
             const refreshResponse = await dispatch(refreshAccessTokenAsync());
             const newAccessToken = refreshResponse.payload.access;
+            localStorage.setItem("accessToken", newAccessToken);
+
+            dispatch(
+              setToken({
+                access: newAccessToken,
+                user_id: localStorage.getItem("user_id"),
+                expiry: refreshResponse.payload.expiry,
+              })
+            );
+
 
             if (newAccessToken) {
               headers.headers.Authorization = `Bearer ${newAccessToken}`;

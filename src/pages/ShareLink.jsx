@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { selectToken, selectUserId, refreshAccessTokenAsync } from "../components/features/AuthSlice";
+import { selectToken, selectUserId, refreshAccessTokenAsync, setToken } from "../components/features/AuthSlice";
 import { selectLienSondageStockes } from "../components/features/SondageSlices";
 import { Toaster, toast } from "sonner";
 import AllInOne from "./AllInOne";
@@ -49,6 +49,15 @@ const ShareLink = () => {
         if (error.response && error.response.status === 401) {
           const refreshResponse = await dispatch(refreshAccessTokenAsync());
           const newAccessToken = refreshResponse.payload.access;
+          localStorage.setItem("accessToken", newAccessToken);
+
+            dispatch(
+              setToken({
+                access: newAccessToken,
+                user_id: localStorage.getItem("user_id"),
+                expiry: refreshResponse.payload.expiry,
+              })
+            );
 
           if (newAccessToken) {
             const headers = {
