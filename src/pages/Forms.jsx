@@ -193,7 +193,6 @@ const Forms = () => {
                   <DeleteIcon />
                 </button>
               )}
-              {/* Ajoutez une condition pour afficher le bouton d'ajout */}
               {(index === lastFieldIndex ||
                 index === formFields.length - 1) && (
                 <button
