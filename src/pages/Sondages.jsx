@@ -20,7 +20,6 @@ const Sondages = () => {
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
   const isMounted = useRef(true);
-  // const tokenTest = localStorage.getItem('accessToken')
 
   useEffect(() => {
     const fetchData = async () => {
@@ -66,25 +65,30 @@ const Sondages = () => {
 
               if (newAccessToken) {
                 // fetchData();
-                const res = await axios.get("https://pulso-backend.onrender.com/api/sondages/", {
-                headers: {
-                  Authorization: `Bearer ${newAccessToken}`,
-                },
-              });
+                const res = await axios.get(
+                  "https://pulso-backend.onrender.com/api/sondages/",
+                  {
+                    headers: {
+                      Authorization: `Bearer ${newAccessToken}`,
+                    },
+                  }
+                );
 
-              const userSondages = res.data.filter((survey) => {
-                return survey.owner === parseInt(userId);
-              });
-    
-              const filteredSondageIds = lienSondagesStockes
-                .filter((s) =>
-                  userSondages.map((sondage) => sondage.id).includes(s.sondageId)
-                )
-                .map((s) => s.sondageId);
-    
-              console.log(" Sondage Ids:", filteredSondageIds);
-    
-              setSondages(userSondages);
+                const userSondages = res.data.filter((survey) => {
+                  return survey.owner === parseInt(userId);
+                });
+
+                const filteredSondageIds = lienSondagesStockes
+                  .filter((s) =>
+                    userSondages
+                      .map((sondage) => sondage.id)
+                      .includes(s.sondageId)
+                  )
+                  .map((s) => s.sondageId);
+
+                console.log(" Sondage Ids:", filteredSondageIds);
+
+                setSondages(userSondages);
               } else {
                 console.error("Token pas disponible");
               }
