@@ -46,7 +46,6 @@ const SondageResults = () => {
           headers
         );
         setVotes(Votes.data.answers);
-        console.log("Nombre de votes", Votes.data.answers.length);
         setLoading(false);
 
         setResult(sondageResponse.data);
