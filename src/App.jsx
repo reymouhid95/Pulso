@@ -10,7 +10,7 @@ import Forms from "./pages/Forms";
 import Templates from "./layouts/Templates";
 import Inscription from "./pages/authentification/Inscription";
 import Connexion from "./pages/authentification/Connexion";
-import Sondages from "./pages/Sondages";
+// import Sondages from "./pages/Sondages";
 import SondageResults from "./pages/SondageResults";
 import ShareLink from "./pages/ShareLink";
 import SondageVote from "./pages/SondageVote";
@@ -28,8 +28,8 @@ function App() {
         <Route path="/forms" element={<Forms />} />
         <Route path="/inscription" element={<Inscription />} />
         <Route path="/connexion" element={<Connexion />} />
-        <Route path="/sondages" element={<Sondages />} />
-        <Route path="/listsondages" element={<ListSondages />} />
+        <Route path="/sondages" element={<ListSondages />} />
+        {/* <Route path="/listsondages" element={<ListSondages />} /> */}
         <Route path="/allinone/:sondageId" element={<AllInOne />} />
         <Route path="/sondages/:slug" element={<SondageVote />} />
         <Route path="/resultats/:sondageId" element={<SondageResults />} />
