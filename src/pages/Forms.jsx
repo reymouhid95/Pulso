@@ -5,7 +5,7 @@ import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { useSelector } from "react-redux";
-import { selectToken, selectUserId } from "../components/features/AuthSlice";
+import { refreshAccessTokenAsync, selectToken, selectUserId, setToken } from "../components/features/AuthSlice";
 import { useNavigate } from "react-router-dom";
 import { Toaster, toast } from "sonner";
 import { useDispatch } from "react-redux";
@@ -80,54 +80,89 @@ const Forms = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (!token) {
-      toast.warning(
-        "Veuillez vous identifier avant de pouvoir créer un sondage"
-      );
+      toast.warning("Veuillez vous identifier avant de pouvoir créer un sondage");
       setTimeout(() => {
         navigate("/connexion");
       }, 2000);
-
       return;
     }
-
+  
     try {
       setLoading(true);
       const res = await submitForm({
         question: formTitle,
         options: formFields.map((field) => field.value),
       });
-
+  
       if (res && res.status === 201) {
         const { slug, id: sondageId, owner: userId } = res.data;
         const lienSondage = `https://pulso-psi.vercel.app/sondages/${slug}`;
-
-        dispatch(
-          setLienSondageStockes({ sondageId, lien: lienSondage, owner: userId })
-        );
+  
+        dispatch(setLienSondageStockes({ sondageId, lien: lienSondage, owner: userId }));
         dispatch(setSondageId([sondageId]));
-
+  
         navigate(`/last-survey/${sondageId}`);
-
-
-        toast.success(
-          "Sondage créé. Vous pouvez à présent partager votre sondage !"
-        );
+  
+        toast.success("Sondage créé. Vous pouvez à présent partager votre sondage !");
         setFormTitle("");
         setFormFields([{ type: "text", value: "", key: 0 }]);
         localStorage.removeItem("formFields");
         localStorage.removeItem("formTitle");
       }
     } catch (error) {
-      console.error(
-        "Error:",
-        error.response ? error.response.data : error.message
-      );
-    } finally {
-      setLoading(false);
+      console.error("Error:", error.response ? error.response.data : error.message);
+  
+      if (error.response.status === 401) {
+        try {
+          const refreshResponse = await dispatch(refreshAccessTokenAsync());
+          const newAccessToken = refreshResponse.payload.access;
+          localStorage.setItem("accessToken", newAccessToken);
+  
+          dispatch(
+            setToken({
+              access: newAccessToken,
+              user_id: localStorage.getItem("user_id"),
+              expiry: refreshResponse.payload.expiry,
+            })
+          );
+  
+          if (newAccessToken) {
+            const res = await submitForm({
+              question: formTitle,
+              options: formFields.map((field) => field.value),
+            });
+  
+            if (res && res.status === 201) {
+              const { slug, id: sondageId, owner: userId } = res.data;
+              const lienSondage = `https://pulso-psi.vercel.app/sondages/${slug}`;
+  
+              dispatch(setLienSondageStockes({ sondageId, lien: lienSondage, owner: userId }));
+              dispatch(setSondageId([sondageId]));
+  
+              navigate(`/last-survey/${sondageId}`);
+  
+              toast.success("Sondage créé. Vous pouvez à présent partager votre sondage !");
+              setFormTitle("");
+              setFormFields([{ type: "text", value: "", key: 0 }]);
+              localStorage.removeItem("formFields");
+              localStorage.removeItem("formTitle");
+            }
+          } else {
+            console.error("Token pas disponible");
+          }
+        } catch (refreshError) {
+          console.error("Erreur lors du rafraîchissement du token:", refreshError);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setLoading(false);
+      }
     }
   };
+  
 
   const submitForm = async (formData) => {
     try {
