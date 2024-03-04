@@ -72,6 +72,9 @@ const Forms = () => {
   const removeField = (index) => {
     const newFields = formFields.filter((field) => field.key !== index);
     setFormFields(newFields);
+    if (newFields.length === 1) {
+      setLastFieldIndex(0);
+    }
     localStorage.setItem("formFields", JSON.stringify(newFields));
   };
 
@@ -181,16 +184,15 @@ const Forms = () => {
         {formFields.map((field, index) => (
           <div key={field.key} className="flex items-center mb-4">
             <div className="ml-2 flex">
-              <button
-                type="button"
-                onClick={() => removeField(field.key)}
-                className={`px-2 py-1 mr-1 rounded text-gray-500 ${
-                  index === 0 ? "disabled" : ""
-                }`}
-                disabled={index === 0}
-              >
-                <DeleteIcon />
-              </button>
+              {index !== 0 && (
+                <button
+                  type="button"
+                  onClick={() => removeField(field.key)}
+                  className="px-2 py-1 mr-1 rounded text-gray-500"
+                >
+                  <DeleteIcon />
+                </button>
+              )}
               {index === lastFieldIndex && (
                 <button
                   type="button"
@@ -212,6 +214,7 @@ const Forms = () => {
             />
           </div>
         ))}
+
         <div className="flex justify-center">
           <button
             type="submit"
