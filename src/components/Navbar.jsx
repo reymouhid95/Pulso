@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout, selectToken } from "../components/features/AuthSlice";
 import { Toaster, toast } from "sonner";
-import Photos from "../assets/photos.png"
+
 
 
 const Navbar = () => {
@@ -15,15 +15,11 @@ const Navbar = () => {
   const [currentImage, setCurrentImage] = useState('');
   const username = localStorage.getItem('username')
 
-  console.log(username)
+  
 
 
-//images
-const changerImage = () => {
-  setCurrentImage('');
-};
 
-//username
+
   // Ajouter un écouteur d'événements sur le document pour fermer le menu au clic en dehors du composant
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -170,7 +166,8 @@ const changerImage = () => {
                 </button>
               </NavLink>
               <div className="w-44 px-4 py-2 flex items-center justify-between mx-24">
-              <img src={Photos} alt='image' onClick={changerImage} />
+              <p className="font-bold mx-12">{username}</p>
+              
               </div>
             </div>
           )} 
