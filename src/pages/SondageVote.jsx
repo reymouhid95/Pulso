@@ -59,10 +59,7 @@ const SondageVote = () => {
 
       // Vérifier la réponse du serveur
       if (response.status === 201) {
-        toast.success("Merci pour votre vote!");
-        setTimeout(() => {
-          navigate("/pageaftervote");
-        }, 2000);
+        navigate("/pageaftervote");
       } else {
         console.error("Erreur lors du vote");
         toast.error("Une erreur s'est produite lors de votre vote.");
