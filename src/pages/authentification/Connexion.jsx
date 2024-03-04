@@ -32,7 +32,7 @@ const Connexion = () => {
       localStorage.setItem("refreshToken", response.token.refresh);
       localStorage.setItem("user_id", response.user_id);
 
-      reset(); // Réinitialise le formulaire après soumission
+      reset();
       setLoading(false);
       toast.success("Vous êtes à présent connecté, amusez-vous!");
       setTimeout(() => {
@@ -42,7 +42,7 @@ const Connexion = () => {
       setLoading(false);
       console.error("Erreur lors de la connexion:", error);
       toast.error(
-        "Votre connexion a échoué. Veuillez vérifier votre connexion internet!"
+        "Votre connexion a échoué. Veuillez vérifier votre connexion internet ou vos identifants!"
       );
     }
   };
