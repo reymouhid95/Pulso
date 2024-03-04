@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-import { selectToken, selectUserId } from "../components/features/AuthSlice";
+import { useSelector, useDispatch } from "react-redux";
+import { selectToken, selectUserId, refreshAccessTokenAsync } from "../components/features/AuthSlice";
 import { selectLienSondageStockes } from "../components/features/SondageSlices";
 import { Toaster, toast } from "sonner";
 import AllInOne from "./AllInOne";
@@ -16,6 +16,7 @@ const ShareLink = () => {
   const [question, setQuestion] = useState("");
   const [loading, setLoading] = useState(true);
   const { sondageId } = useParams();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchQuestion = async () => {
@@ -29,25 +30,50 @@ const ShareLink = () => {
           return;
         }
 
+        const headers = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+
         const sondageResponse = await axios.get(
           `https://pulso-backend.onrender.com/api/sondages/${sondageId}/`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+          headers
         );
 
         setQuestion(sondageResponse.data.question);
         setLoading(false);
       } catch (error) {
         console.error("Erreur:", error);
-        setLoading(false);
+
+        if (error.response && error.response.status === 401) {
+          const refreshResponse = await dispatch(refreshAccessTokenAsync());
+          const newAccessToken = refreshResponse.payload.access;
+
+          if (newAccessToken) {
+            const headers = {
+              headers: {
+                Authorization: `Bearer ${newAccessToken}`,
+              },
+            };
+
+            const sondageResponse = await axios.get(
+              `https://pulso-backend.onrender.com/api/sondages/${sondageId}/`,
+              headers
+            );
+
+            setQuestion(sondageResponse.data.question);
+            setLoading(false);
+          } else {
+            console.error("Erreur de rafraichissement du token");
+            setLoading(false);
+          }
+        }
       }
     };
 
     fetchQuestion();
-  }, [token, sondageId]);
+  }, [token, sondageId, dispatch]);
 
   const userLiensSondages = liensSondages.filter(
     (lien) => lien.owner == userId && lien.sondageId == sondageId
