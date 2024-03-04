@@ -13,6 +13,7 @@ const SondageResults = () => {
   const token = useSelector(selectToken);
   const user_id = useSelector(selectUserId);
   const { sondageId } = useParams();
+  const [votes, setVotes] = useState(0);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -36,6 +37,14 @@ const SondageResults = () => {
           headers
         );
 
+        const Votes = await axios.get(
+          `https://pulso-backend.onrender.com/api/sondages/${sondageId}/resultats/`,
+          headers
+          );
+          setVotes(Votes.data.answers);
+          console.log("Nombre de votes", Votes.data.answers.length)
+          setLoading(false);
+
         setResult(sondageResponse.data);
         setQuestion(sondageResponse.data.question);
         setLoading(false);
@@ -52,6 +61,14 @@ const SondageResults = () => {
                 Authorization: `Bearer ${newAccessToken}`,
               },
             };
+
+            const Votes = await axios.get(
+              `https://pulso-backend.onrender.com/api/sondages/${sondageId}/resultats/`,
+              headers
+              );
+              setVotes(Votes.data);
+              console.log(Votes.data.answers)
+              setLoading(false);
 
             const sondageResponse = await axios.get(
               `https://pulso-backend.onrender.com/api/sondages/${sondageId}/`,
@@ -152,6 +169,8 @@ const SondageResults = () => {
           {question}
         </h1>
         <div className="options-container">{graphiqueOptionBar}</div>
+
+        <h3 className="text-gray-500 text-4xl font-black mt-20 text-center">Nombre de Votes : {votes.length}</h3>
       </div>
     </div>
   );
