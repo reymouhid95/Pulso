@@ -15,10 +15,12 @@ const SondageVote = () => {
   });
   const [selectedOption, setSelectedOption] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoader, setIsLoader] = useState(false);
 
   useEffect(() => {
     const fetchSondageDetails = async () => {
       try {
+        setIsLoader(true);
         const response = await axios.get(
           `https://pulso-backend.onrender.com/api/sondages/${slug}`
         );
@@ -31,6 +33,7 @@ const SondageVote = () => {
       } catch (error) {
         console.error("Erreur:", error);
         setSondageDetails(null);
+        setIsLoader(false);
       }
     };
 
@@ -78,7 +81,7 @@ const SondageVote = () => {
 
   return (
     <div className="text-center mt-40 font-sans">
-      {isLoading && <LinearProgress />}
+      {isLoader && <LinearProgress />}
       <Toaster position="top-left" />
       <h1 className="text-gray-500 text-4xl font-black mb-10 text-center">
         {question}

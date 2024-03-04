@@ -1,8 +1,13 @@
-import  { useState, useEffect } from "react";
+/* eslint-disable no-unused-vars */
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { selectLienSondageStockes } from "../components/features/SondageSlices";
-import { refreshAccessTokenAsync, selectToken, selectUserId } from "../components/features/AuthSlice";
+import {
+  refreshAccessTokenAsync,
+  selectToken,
+  selectUserId,
+} from "../components/features/AuthSlice";
 import AllInOne from "./AllInOne";
 import { useParams } from "react-router-dom";
 import LinearProgress from "@mui/material/LinearProgress";
@@ -34,11 +39,6 @@ const Soumissions = () => {
         const sondage = lienSondagesStockes.find(
           (s) => s.sondageId == sondageId
         );
-
-        if (!sondage || sondage.owner !== user_id) {
-          console.log("Sondage non trouvé ou non autorisé");
-          return;
-        }
 
         const headers = {
           headers: {
