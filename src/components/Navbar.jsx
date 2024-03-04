@@ -1,10 +1,10 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useRef, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout, selectToken } from "../components/features/AuthSlice";
 import { Toaster, toast } from "sonner";
-import Photos from "../assets/photos.png"
-
+import Photos from "../assets/photos.png";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -12,19 +12,9 @@ const Navbar = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
   const navigate = useNavigate();
-  const [currentImage, setCurrentImage] = useState('');
-  const username = localStorage.getItem('username')
+  const [currentImage, setCurrentImage] = useState("");
+  const username = localStorage.getItem("username");
 
-  console.log(username)
-
-
-//images
-const changerImage = () => {
-  setCurrentImage('');
-};
-
-//username
-  // Ajouter un écouteur d'événements sur le document pour fermer le menu au clic en dehors du composant
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -49,15 +39,15 @@ const changerImage = () => {
 
   const handleLogout = async () => {
     try {
-      localStorage.removeItem('user_id')
-      localStorage.removeItem('accessToken')
-      localStorage.removeItem('refreshToken')
-      localStorage.removeItem('username')
+      localStorage.removeItem("user_id");
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("username");
       dispatch(logout());
       navigate("/forms");
     } catch (error) {
       console.error("Erreur lors de la déconnexion:", error);
-      toast.warning(
+      toast.error(
         "VOus n'avez pas pu vous déconnecter. Vérifiez votre connexion internet !"
       );
     }
@@ -115,11 +105,9 @@ const changerImage = () => {
               Créer un formulaire
             </button>
           </NavLink>
-              <div >
-        <p className="font-bold mx-4">{username}</p>
-     
-    </div>
-          
+          <div>
+            <p className="font-bold text-gray-400">{username}</p>
+          </div>
         </div>
         <div className="md:hidden flex items-center ref={menuRef}">
           <button
@@ -169,11 +157,11 @@ const changerImage = () => {
                   Créer un formulaire
                 </button>
               </NavLink>
-              <div className="w-44 px-4 py-2 flex items-center justify-between mx-24">
-              <img src={Photos} alt='image' onClick={changerImage} />
+              <div className="text-center">
+                <p className="font-bold text-gray-400">{username}</p>
               </div>
             </div>
-          )} 
+          )}
         </div>
       </nav>
     </>
