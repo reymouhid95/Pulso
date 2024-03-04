@@ -193,7 +193,9 @@ const Forms = () => {
                   <DeleteIcon />
                 </button>
               )}
-              {index === lastFieldIndex && (
+              {/* Ajoutez une condition pour afficher le bouton d'ajout */}
+              {(index === lastFieldIndex ||
+                index === formFields.length - 1) && (
                 <button
                   type="button"
                   onClick={addField}
@@ -204,7 +206,7 @@ const Forms = () => {
               )}
             </div>
             <input
-              ref={inputRef}
+              ref={index === lastFieldIndex ? inputRef : null}
               type={field.type}
               placeholder="Contenu du formulaire"
               value={field.value}
