@@ -74,14 +74,11 @@ const SondageVote = () => {
     }
   };
 
-  if (!sondageDetails) {
-    return <div>Loading...</div>;
-  }
-
   const { question, options } = sondageDetails;
 
   return (
     <div className="text-center mt-40 font-sans">
+      {isLoading && <LinearProgress />}
       <Toaster position="top-left" />
       <h1 className="text-gray-500 text-4xl font-black mb-10 text-center">
         {question}
@@ -111,7 +108,6 @@ const SondageVote = () => {
       >
         {isLoading ? <CircularProgress size={20} /> : "Voter"}
       </button>
-      {isLoading && <LinearProgress />}
     </div>
   );
 };
