@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { selectToken, selectUserId } from "../components/features/AuthSlice";
+import { refreshAccessTokenAsync, selectToken, selectUserId, setToken } from "../components/features/AuthSlice";
 import { useNavigate } from "react-router";
 import { selectLienSondageStockes } from "../components/features/SondageSlices";
 import LinearProgress from "@mui/material/LinearProgress";
@@ -50,7 +50,63 @@ const Sondages = () => {
 
           setLoading(false);
         } catch (error) {
-          console.error("Error fetching sondages:", error);
+          if (error.response.status === 401) {
+            try {
+              const refreshResponse = await dispatch(refreshAccessTokenAsync());
+              const newAccessToken = refreshResponse.payload.access;
+              localStorage.setItem("accessToken", newAccessToken);
+
+              dispatch(
+                setToken({
+                  access: newAccessToken,
+                  user_id: localStorage.getItem("user_id"),
+                  expiry: refreshResponse.payload.expiry,
+                })
+              );
+
+              if (newAccessToken) {
+                // fetchData();
+                const res = await axios.get(
+                  "https://pulso-backend.onrender.com/api/sondages/",
+                  {
+                    headers: {
+                      Authorization: `Bearer ${newAccessToken}`,
+                    },
+                  }
+                );
+
+                const userSondages = res.data.filter((survey) => {
+                  return survey.owner === parseInt(userId);
+                });
+
+                const filteredSondageIds = lienSondagesStockes
+                  .filter((s) =>
+                    userSondages
+                      .map((sondage) => sondage.id)
+                      .includes(s.sondageId)
+                  )
+                  .map((s) => s.sondageId);
+
+                console.log(" Sondage Ids:", filteredSondageIds);
+
+                setSondages(userSondages);
+              } else {
+                console.error("Token pas disponible");
+              }
+            } catch (refreshError) {
+              console.error(
+                "Erreur lors du rafraîchissement du token:",
+                refreshError
+              );
+            } finally {
+              setLoading(false);
+            }
+          } else {
+            console.error(
+              "Erreur lors de la récupération des sondages:",
+              error
+            );
+          }
         }
       }
     };
