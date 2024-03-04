@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import axios from "axios";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -13,6 +13,7 @@ import {
   setLienSondageStockes,
   setSondageId,
 } from "../components/features/SondageSlices";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const Forms = () => {
   const [token] = useState(useSelector(selectToken));
@@ -20,12 +21,29 @@ const Forms = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
+  const [lastFieldIndex, setLastFieldIndex] = useState(0);
 
-  const [formFields, setFormFields] = useState([
-    { type: "text", value: "", key: 0 },
-  ]);
-  const [formTitle, setFormTitle] = useState("");
+  const [formFields, setFormFields] = useState(
+    JSON.parse(localStorage.getItem("formFields")) || [
+      { type: "text", value: "", key: 0 },
+    ]
+  );
+  const [formTitle, setFormTitle] = useState(
+    localStorage.getItem("formTitle") || ""
+  );
   const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (token) {
+      const storedFormFields = JSON.parse(localStorage.getItem("formFields"));
+      const storedFormTitle = localStorage.getItem("formTitle");
+
+      if (storedFormFields && storedFormTitle) {
+        setFormFields(storedFormFields);
+        setFormTitle(storedFormTitle);
+      }
+    }
+  }, [token]);
 
   const handleTextareaSubmit = (e) => {
     if (e.key === "Enter") {
@@ -38,6 +56,7 @@ const Forms = () => {
     const newFields = [...formFields];
     newFields[index].value = e.target.value;
     setFormFields(newFields);
+    localStorage.setItem("formFields", JSON.stringify(newFields));
   };
 
   const addField = () => {
@@ -46,11 +65,14 @@ const Forms = () => {
       { type: "text", value: "", key: formFields.length },
     ];
     setFormFields(newFields);
+    setLastFieldIndex(newFields.length - 1);
+    localStorage.setItem("formFields", JSON.stringify(newFields));
   };
 
   const removeField = (index) => {
     const newFields = formFields.filter((field) => field.key !== index);
     setFormFields(newFields);
+    localStorage.setItem("formFields", JSON.stringify(newFields));
   };
 
   const handleSubmit = async (e) => {
@@ -76,7 +98,7 @@ const Forms = () => {
 
       if (res && res.status === 201) {
         const { slug, id: sondageId, owner: userId } = res.data;
-        const lienSondage = `https://backup-pulso.vercel.app/sondages/${slug}`;
+        const lienSondage = `https://pulso-psi.vercel.app/sondages/${slug}`;
 
         dispatch(
           setLienSondageStockes({ sondageId, lien: lienSondage, owner: userId })
@@ -88,6 +110,8 @@ const Forms = () => {
         );
         setFormTitle("");
         setFormFields([{ type: "text", value: "", key: 0 }]);
+        localStorage.removeItem("formFields");
+        localStorage.removeItem("formTitle");
       }
     } catch (error) {
       console.error(
@@ -135,10 +159,10 @@ const Forms = () => {
       <Toaster position="top-left" />
       <div className="absolute right-5 top-28">
         <button
-          onClick={() => navigate("/share-link")}
+          onClick={() => navigate("/latest-survey")}
           className="rounded-md text-white bg-blue-500  hover:bg-blue-600 px-4 py-1 focus:outline-none focus:bg-blue-600 font-bold"
         >
-          Publier
+          Voir
         </button>
       </div>
       <form onSubmit={handleSubmit} className="mt-20">
@@ -148,7 +172,10 @@ const Forms = () => {
             className="w-full p-2 border-none outline-none text-4xl font-bold rounded-md text-gray-500"
             required
             value={formTitle}
-            onChange={(e) => setFormTitle(e.target.value)}
+            onChange={(e) => {
+              setFormTitle(e.target.value);
+              localStorage.setItem("formTitle", e.target.value);
+            }}
           ></textarea>
         </div>
         {formFields.map((field, index) => (
@@ -164,13 +191,15 @@ const Forms = () => {
               >
                 <DeleteIcon />
               </button>
-              <button
-                type="button"
-                onClick={addField}
-                className="px-2 py-1 rounded text-gray-500"
-              >
-                <AddRoundedIcon />
-              </button>
+              {index === lastFieldIndex && (
+                <button
+                  type="button"
+                  onClick={addField}
+                  className="px-2 py-1 rounded text-gray-500"
+                >
+                  <AddRoundedIcon />
+                </button>
+              )}
             </div>
             <input
               ref={inputRef}
@@ -189,7 +218,11 @@ const Forms = () => {
             className="px-4 py-2 bg-black  hover:bg-gray-800 font-bold text-white rounded"
             disabled={loading}
           >
-            {loading ? "Soumission..." : "Soumettre"}{" "}
+            {loading ? (
+              <CircularProgress size={19} thickness={4} />
+            ) : (
+              "Soumettre"
+            )}{" "}
             <ArrowForwardIcon className="ml-2" />
           </button>
         </div>

@@ -1,4 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
+import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { loginUser } from "../../components/services/AuthServices";
@@ -12,22 +13,12 @@ const Connexion = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const { register, handleSubmit, reset } = useForm();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
-  };
-
-  // Soumission du formulaire pour connecter un utilisateur
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
     try {
       setLoading(true);
-      const response = await loginUser(formData.email, formData.password);
+      const response = await loginUser(data.email, data.password);
       dispatch(setUser(response.user));
       dispatch(
         setToken({
@@ -42,12 +33,7 @@ const Connexion = () => {
       localStorage.setItem("user_id", response.user_id);
       localStorage.setItem("username", response.username);
 
-      // localStorage.setItem("user", JSON.stringify(response.user_id));
-
-      setFormData({
-        email: "",
-        password: "",
-      });
+      reset(); // Réinitialise le formulaire après soumission
       setLoading(false);
       toast.success("Vous êtes à présent connecté, amusez-vous!");
       setTimeout(() => {
@@ -69,17 +55,15 @@ const Connexion = () => {
         <h2 className="text-gray-500 text-3xl mb-6 font-bold text-center">
           Pulso
         </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <input
               type="email"
               id="email"
               name="email"
               placeholder="Entrer l'email"
-              value={formData.email}
-              onChange={handleChange}
+              {...register("email", { required: true })}
               className="w-full px-3 py-2 border-b border-gray-300 focus:outline-none focus:border-blue-500"
-              required
             />
           </div>
           <div>
@@ -88,10 +72,8 @@ const Connexion = () => {
               id="password"
               name="password"
               placeholder="Entrer le mot de passe"
-              value={formData.password}
-              onChange={handleChange}
+              {...register("password", { required: true })}
               className="w-full px-3 py-2 border-b border-gray-300 focus:outline-none focus:border-blue-500"
-              required
             />
           </div>
           <button
