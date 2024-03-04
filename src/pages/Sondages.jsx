@@ -55,7 +55,6 @@ const Sondages = () => {
               const refreshResponse = await dispatch(refreshAccessTokenAsync());
               const newAccessToken = refreshResponse.payload.access;
               localStorage.setItem("accessToken", newAccessToken);
-              console.log("Nouveau Token:", newAccessToken);
 
               dispatch(
                 setToken({
@@ -67,32 +66,25 @@ const Sondages = () => {
 
               if (newAccessToken) {
                 // fetchData();
-                const res = await axios.get(
-                  "https://pulso-backend.onrender.com/api/sondages/",
-                  {
-                    headers: {
-                      Authorization: `Bearer ${newAccessToken}`,
-                    },
-                  }
-                );
-                console.log("Reponses:", res);
+                const res = await axios.get("https://pulso-backend.onrender.com/api/sondages/", {
+                headers: {
+                  Authorization: `Bearer ${newAccessToken}`,
+                },
+              });
 
-                const userSondages = res.data.filter((survey) => {
-                  return survey.owner === parseInt(userId);
-                });
-
-                const filteredSondageIds = lienSondagesStockes
-                  .filter((s) =>
-                    userSondages
-                      .map((sondage) => sondage.id)
-                      .includes(s.sondageId)
-                  )
-                  .map((s) => s.sondageId);
-
-                console.log(" Sondage Ids:", filteredSondageIds);
-
-                setSondages(userSondages);
-                console.log("Token refreshing succesufully");
+              const userSondages = res.data.filter((survey) => {
+                return survey.owner === parseInt(userId);
+              });
+    
+              const filteredSondageIds = lienSondagesStockes
+                .filter((s) =>
+                  userSondages.map((sondage) => sondage.id).includes(s.sondageId)
+                )
+                .map((s) => s.sondageId);
+    
+              console.log(" Sondage Ids:", filteredSondageIds);
+    
+              setSondages(userSondages);
               } else {
                 console.error("Token pas disponible");
               }
