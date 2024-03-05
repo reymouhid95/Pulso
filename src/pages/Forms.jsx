@@ -248,7 +248,7 @@ const Forms = () => {
         {formFields.map((field, index) => (
           <div
             key={field.key}
-            className="flex items-center mb-4 relative"
+            className="flex items-center mb-4"
             onMouseEnter={() => setHoveredIndex(index)}
             onMouseLeave={() => setHoveredIndex(null)}
           >
