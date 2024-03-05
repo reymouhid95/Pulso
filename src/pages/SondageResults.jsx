@@ -135,10 +135,17 @@ const SondageResults = () => {
 
   const totalVotes = answers ? answers.length : 0;
 
-  const optionPlusElevee = Object.keys(pourcentageOptions).reduce(
-    (a, b) => (pourcentageOptions[a] > pourcentageOptions[b] ? a : b),
-    ""
-  );
+  const getColorClass = (percentage) => {
+    if (percentage >= 75) {
+      return "bg-green-500";
+    } else if (percentage >= 50) {
+      return "bg-yellow-500";
+    } else if (percentage >= 25) {
+      return "bg-orange-500";
+    } else {
+      return "bg-red-500";
+    }
+  };
 
   const graphiqueOptionBar = Object.keys(pourcentageOptions).map((option) => (
     <div
@@ -149,9 +156,9 @@ const SondageResults = () => {
         <div className="w-1/4 text-right pr-4">{option}</div>
         <div className="w-1/2 bg-gray-200 h-6 rounded-full overflow-hidden">
           <div
-            className={`h-full bg-blue-500 ${
-              option === optionPlusElevee ? "most-frequent" : ""
-            }`}
+            className={`h-full ${getColorClass(
+              (pourcentageOptions[option] / totalVotes) * 100
+            )}`}
             style={{
               width: `${(pourcentageOptions[option] / totalVotes) * 100}%`,
             }}
@@ -173,7 +180,7 @@ const SondageResults = () => {
         </h1>
         <div className="options-container">{graphiqueOptionBar}</div>
         <h3 className="text-gray-500 text-4xl font-black mt-12 text-center">
-          Nombre de Votes : {votes.length}
+          Votes : {votes.length}
         </h3>
       </div>
     </div>
