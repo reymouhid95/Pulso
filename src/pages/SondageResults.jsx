@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -14,82 +14,88 @@ const SondageResults = () => {
   const [loading, setLoading] = useState(true);
   const [result, setResult] = useState({});
   const [question, setQuestion] = useState("");
+  const [votes, setVotes] = useState(0);
   const token = useSelector(selectToken);
   const user_id = useSelector(selectUserId);
   const { sondageId } = useParams();
-  const [votes, setVotes] = useState(0);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    const fetchResults = async () => {
-      try {
-        if (!token || !sondageId) {
-          console.log(
-            "Pas de Token ou de sondageId. Impossible de voir les resultats"
-          );
-          return;
-        }
+  const fetchResults = async () => {
+    try {
+      if (!token || !sondageId) {
+        console.log(
+          "Pas de Token ou de sondageId. Impossible de voir les resultats"
+        );
+        return;
+      }
 
-        const headers = {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        };
+      const headers = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
 
-        const sondageResponse = await axios.get(
+      const [sondageResponse, votesResponse] = await Promise.all([
+        axios.get(
           `https://pulso-backend.onrender.com/api/sondages/${sondageId}/`,
           headers
-        );
-
-        const Votes = await axios.get(
+        ),
+        axios.get(
           `https://pulso-backend.onrender.com/api/sondages/${sondageId}/resultats/`,
           headers
-        );
-        setVotes(Votes.data.answers);
-        console.log("Nombre de votes", Votes.data.answers.length);
-        setLoading(false);
+        ),
+      ]);
 
-        setResult(sondageResponse.data);
-        setQuestion(sondageResponse.data.question);
-        setLoading(false);
-      } catch (error) {
-        console.error("Erreur:", error);
+      setVotes(votesResponse.data.answers);
+      console.log("Nombre de votes", votesResponse.data.answers.length);
+      setLoading(false);
 
-        if (error.response && error.response.status === 401) {
-          const refreshResponse = await dispatch(refreshAccessTokenAsync());
-          const newAccessToken = refreshResponse.payload.access;
+      setResult(sondageResponse.data);
+      setQuestion(sondageResponse.data.question);
+      setLoading(false);
+    } catch (error) {
+      console.error("Erreur:", error);
 
-          if (newAccessToken) {
-            const headers = {
-              headers: {
-                Authorization: `Bearer ${newAccessToken}`,
-              },
-            };
+      if (error.response && error.response.status === 401) {
+        const refreshResponse = await dispatch(refreshAccessTokenAsync());
+        const newAccessToken = refreshResponse.payload.access;
 
-            const Votes = await axios.get(
-              `https://pulso-backend.onrender.com/api/sondages/${sondageId}/resultats/`,
-              headers
-            );
-            setVotes(Votes.data);
-            console.log(Votes.data.answers);
-            setLoading(false);
+        if (newAccessToken) {
+          const headers = {
+            headers: {
+              Authorization: `Bearer ${newAccessToken}`,
+            },
+          };
 
-            const sondageResponse = await axios.get(
+          const [sondageResponse, votesResponse] = await Promise.all([
+            axios.get(
               `https://pulso-backend.onrender.com/api/sondages/${sondageId}/`,
               headers
-            );
+            ),
+            axios.get(
+              `https://pulso-backend.onrender.com/api/sondages/${sondageId}/resultats/`,
+              headers
+            ),
+          ]);
 
-            setResult(sondageResponse.data);
-            setQuestion(sondageResponse.data.question);
-            setLoading(false);
-          } else {
-            console.error("Error lors du rafraichissement du token");
-          }
+          setVotes(votesResponse.data);
+          console.log(votesResponse.data.answers);
+          setLoading(false);
+
+          setResult(sondageResponse.data);
+          setQuestion(sondageResponse.data.question);
+          setLoading(false);
+        } else {
+          console.error("Error lors du rafraichissement du token");
         }
       }
-    };
+    }
+  };
 
+  useEffect(() => {
     fetchResults();
+    const intervalId = setInterval(fetchResults, 1000);
+    return () => clearInterval(intervalId);
   }, [token, user_id, sondageId, dispatch]);
 
   if (!token) {
@@ -147,8 +153,6 @@ const SondageResults = () => {
     }
   };
 
-  
-
   const graphiqueOptionBar = Object.keys(pourcentageOptions).map((option) => (
     <div
       key={option}
@@ -184,7 +188,6 @@ const SondageResults = () => {
         <h3 className="text-gray-500 text-4xl font-black mt-12 text-center">
           Votes : {votes.length}
         </h3>
-        
       </div>
     </div>
   );
