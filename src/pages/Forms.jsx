@@ -231,7 +231,7 @@ const Forms = () => {
     <div className="flex items-center justify-center mt-40 font-sans">
       <Toaster position="top-left" />
       <div className="absolute right-5 top-28"></div>
-      <form onSubmit={handleSubmit} className="mt-20">
+      <form onSubmit={handleSubmit} className="mt-20 relative">
         <div className="mb-4">
           <textarea
             placeholder="Titre du formulaire"
