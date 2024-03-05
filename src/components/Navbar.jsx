@@ -104,7 +104,7 @@ const Navbar = () => {
             </button>
           </NavLink>
           <div>
-            <p className="font-bold text-gray-400">{username}</p>
+            <p className="font-bold text-gray-400 mx-2">{username}</p>
           </div>
         </div>
         <div className="md:hidden flex items-center ref={menuRef}">

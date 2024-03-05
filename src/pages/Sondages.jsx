@@ -127,7 +127,7 @@ const Sondages = () => {
   };
 
   return (
-    <div className="mt-30 text-center font-sans">
+    <div className="mt-30 text-center font-sans ">
       {loading && <LinearProgress className="mt-20" />}
       {!loading && token && sondages.length === 0 && (
         <div className="text-center text-gray-400 text-2xl font-bold mt-40">
@@ -146,7 +146,7 @@ const Sondages = () => {
               <div className="font-bold text-xl text-center mb-2 py-3 bg-slate-500 text-white ">
                 {sondage.question}
               </div>
-              <ol className="text-gray-400 font-bold hover:text-gray-600 text-center px-5">
+              <ol className="text-gray-400 font-bold hover:text-gray-600 text-items-center justify-center px-5">
                 {sondage.options.map((option, index) => (
                   <li key={index}>{`${index + 1}. ${option}`}</li>
                 ))}

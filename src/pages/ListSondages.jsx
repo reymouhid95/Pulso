@@ -127,13 +127,13 @@ const ListSondages = () => {
   };
 
   return (
-    <div className="mt-10 md:mt-30 text-start ms-20 font-bold ">
+    <div className="mt-10 md:mt-30 text-start ms-20 font-bold mx-8">
       {loading && <LinearProgress className="mt-20" />}
       <hr className="pb-4" />
       {sondages.map((survey) => (
         <div
           key={survey.id}
-          className="mb-5 hover:bg-gray-100 hover:border-gray-50 hover:shadow-md p-4 rounded-md md:ms-12 cursor-pointer"
+          className="mb-5 hover:left-0 hover:bg-gray-100 hover:border-gray-50 hover:shadow-md p-4 rounded-md md:ms-12 cursor-pointer"
           onClick={() => handleClick(survey.id)}
         >
           <ul className="list-none text-gray-700 text-base">

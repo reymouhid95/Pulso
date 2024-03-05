@@ -253,7 +253,7 @@ const Forms = () => {
             onMouseLeave={() => setHoveredIndex(null)}
           >
             {hoveredIndex === index && (
-              <div className="ml-2 flex">
+              <div className="ml-2 flex focus:cursor-pointer">
                 <button
                   id={`delete-button-${field.key}`}
                   type="button"
