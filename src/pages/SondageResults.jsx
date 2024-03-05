@@ -138,7 +138,13 @@ const SondageResults = () => {
   const optionPlusElevee = Object.keys(pourcentageOptions).reduce(
     (a, b) => (pourcentageOptions[a] > pourcentageOptions[b] ? a : b),
     ""
+    
   );
+
+  // const optionmoinsElevee = Object.key(optionPourcentage).reduce(
+  //   (c, d)  => (optionPourcentage[c] < optionmoinsElevee[d] ? c : d), ""
+
+  // )
 
   const graphiqueOptionBar = Object.keys(pourcentageOptions).map((option) => (
     <div
@@ -175,6 +181,7 @@ const SondageResults = () => {
         <h3 className="text-gray-500 text-4xl font-black mt-12 text-center">
           Nombre de Votes : {votes.length}
         </h3>
+        
       </div>
     </div>
   );
