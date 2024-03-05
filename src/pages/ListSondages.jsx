@@ -65,7 +65,6 @@ const ListSondages = () => {
               );
 
               if (newAccessToken) {
-                // fetchData();
                 const res = await axios.get(
                   "https://pulso-backend.onrender.com/api/sondages/",
                   {
