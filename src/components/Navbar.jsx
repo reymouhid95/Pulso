@@ -4,6 +4,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout, selectToken } from "../components/features/AuthSlice";
 import { Toaster, toast } from "sonner";
+import Photos from "../assets/photos.png" 
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -12,6 +13,8 @@ const Navbar = () => {
   const menuRef = useRef(null);
   const navigate = useNavigate();
   const username = localStorage.getItem("username");
+  const userId = localStorage.getItem("user_id");
+  const [avatarUrl, setAvatarUrl] = useState(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -103,7 +106,8 @@ const Navbar = () => {
               Créer un formulaire
             </button>
           </NavLink>
-          <div>
+         
+          <div className="">
             <p className="font-bold text-gray-400">{username}</p>
           </div>
         </div>

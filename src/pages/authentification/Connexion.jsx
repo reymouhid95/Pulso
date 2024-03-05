@@ -25,6 +25,7 @@ const Connexion = () => {
           access: response.token.access,
           refresh: response.token.refresh,
           user_id: response.user_id,
+          username: response.username
         })
       );
 
