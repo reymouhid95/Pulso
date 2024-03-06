@@ -4,7 +4,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout, selectToken } from "../components/features/AuthSlice";
 import { Toaster, toast } from "sonner";
-import Photos from "../assets/photos.png" 
+import Photos from "../assets/photos.png";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -66,6 +66,9 @@ const Navbar = () => {
             <p className="text-gray-600 text-2xl font-bold">Pulso</p>
           </NavLink>
         </div>
+        <div className="flex-grow text-center">
+          <p className="font-bold text-gray-400">{username}</p>
+        </div>
         <div className="hidden md:flex items-center space-x-4">
           {token ? (
             <>
@@ -106,10 +109,6 @@ const Navbar = () => {
               Créer un formulaire
             </button>
           </NavLink>
-         
-          <div className="">
-            <p className="font-bold text-gray-400">{username}</p>
-          </div>
         </div>
         <div className="md:hidden flex items-center ref={menuRef}">
           <button
@@ -159,9 +158,6 @@ const Navbar = () => {
                   Créer un formulaire
                 </button>
               </NavLink>
-              <div className="text-center">
-                <p className="font-bold text-gray-400">{username}</p>
-              </div>
             </div>
           )}
         </div>
