@@ -15,7 +15,6 @@ const ListSondages = () => {
   const [sondages, setSondages] = useState([]);
   const token = useSelector(selectToken);
   const navigate = useNavigate();
-  // eslint-disable-next-line no-unused-vars
   const [loading, setLoading] = useState(true);
   const isMounted = useRef(true);
   const userId = useSelector(selectUserId);
@@ -39,15 +38,12 @@ const ListSondages = () => {
             return survey.owner === parseInt(userId);
           });
 
-          const filteredSondageIds = lienSondagesStockes
-            .filter((s) =>
-              userSondages.map((sondage) => sondage.id).includes(s.sondageId)
-            )
-            .map((s) => s.sondageId);
+          // Mettre à jour les sondages en ajoutant les nouveaux au début
+          setSondages((prevSondages) => [...userSondages, ...prevSondages]);
 
-          console.log(" Sondage Ids:", filteredSondageIds);
+          // Inverser l'ordre des sondages pour placer les nouveaux en premier
+          setSondages((prevSondages) => [...prevSondages].reverse());
 
-          setSondages(userSondages);
           setLoading(false);
         } catch (error) {
           if (error.response.status === 401) {
@@ -78,17 +74,14 @@ const ListSondages = () => {
                   return survey.owner === parseInt(userId);
                 });
 
-                const filteredSondageIds = lienSondagesStockes
-                  .filter((s) =>
-                    userSondages
-                      .map((sondage) => sondage.id)
-                      .includes(s.sondageId)
-                  )
-                  .map((s) => s.sondageId);
+                // Mettre à jour les sondages en ajoutant les nouveaux au début
+                setSondages((prevSondages) => [
+                  ...userSondages,
+                  ...prevSondages,
+                ]);
 
-                console.log(" Sondage Ids:", filteredSondageIds);
-
-                setSondages(userSondages);
+                // Inverser l'ordre des sondages pour placer les nouveaux en premier
+                setSondages((prevSondages) => [...prevSondages].reverse());
               } else {
                 console.error("Token pas disponible");
               }
@@ -119,7 +112,7 @@ const ListSondages = () => {
     return () => {
       isMounted.current = false;
     };
-  }, [token, userId, lienSondagesStockes, dispatch]);
+  }, [token, userId, dispatch]);
 
   const handleClick = (sondageId) => {
     navigate(`/resultats/${sondageId}`);

@@ -252,26 +252,30 @@ const Forms = () => {
             onMouseEnter={() => setHoveredIndex(index)}
             onMouseLeave={() => setHoveredIndex(null)}
           >
-            {hoveredIndex === index && field.value && (
-              <div className="ml-2 flex focus:cursor-pointer">
-                <button
-                  id={`delete-button-${field.key}`}
-                  type="button"
-                  onClick={() => removeField(field.key)}
-                  className="px-2 py-1 mr-1 rounded text-gray-500"
-                  disabled={index === 0}
-                >
-                  <DeleteIcon />
-                </button>
-                <button
-                  type="button"
-                  onClick={addField}
-                  className="px-2 py-1 rounded text-gray-500"
-                >
-                  <AddRoundedIcon />
-                </button>
-              </div>
-            )}
+            <button
+              id={`delete-button-${field.key}`}
+              type="button"
+              onClick={() => removeField(field.key)}
+              className={`px-2 py-1 mr-1 rounded text-gray-500 ${
+                hoveredIndex === index
+                  ? "opacity-100"
+                  : "opacity-0 hover:opacity-100"
+              }`}
+              disabled={index === 0}
+            >
+              <DeleteIcon />
+            </button>
+            <button
+              type="button"
+              onClick={addField}
+              className={`px-2 py-1 rounded text-gray-500 ${
+                hoveredIndex === index
+                  ? "opacity-100"
+                  : "opacity-0 hover:opacity-100"
+              }`}
+            >
+              <AddRoundedIcon />
+            </button>
             <input
               ref={index === lastFieldIndex ? inputRef : null}
               type={field.type}
