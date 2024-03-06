@@ -67,7 +67,7 @@ const Navbar = () => {
           </NavLink>
         </div>
         <div className="flex-grow text-center">
-          <p className="font-bold text-gray-400">{username}</p>
+          <p className="font-bold text-gray-600">{username}</p>
         </div>
         <div className="hidden md:flex items-center space-x-4">
           {token ? (
