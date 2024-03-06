@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { selectToken, selectUserId } from "../components/features/AuthSlice";
 import { selectLienSondageStockes } from "../components/features/SondageSlices";
 import { Toaster, toast } from "sonner";
-import AllInOne from "./AllInOne";
+import AllInOne from "../components/AllInOne";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 
