@@ -38,6 +38,14 @@ const ListSondages = () => {
             return survey.owner === parseInt(userId);
           });
 
+          const filteredSondageIds = lienSondagesStockes
+            .filter((s) =>
+              userSondages.map((sondage) => sondage.id).includes(s.sondageId)
+            )
+            .map((s) => s.sondageId);
+
+          console.log(" Sondage Ids:", filteredSondageIds);
+
           // Mettre à jour les sondages en ajoutant les nouveaux au début
           setSondages((prevSondages) => [...userSondages, ...prevSondages]);
 
@@ -75,7 +83,10 @@ const ListSondages = () => {
                 });
 
                 // Mettre à jour les sondages en ajoutant les nouveaux au début
-                setSondages((prevSondages) => [...userSondages, ...prevSondages]);
+                setSondages((prevSondages) => [
+                  ...userSondages,
+                  ...prevSondages,
+                ]);
 
                 // Inverser l'ordre des sondages pour placer les nouveaux en premier
                 setSondages((prevSondages) => [...prevSondages].reverse());
