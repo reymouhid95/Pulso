@@ -29,6 +29,10 @@ const Forms = () => {
   const [lastFieldIndex, setLastFieldIndex] = useState(0);
   const [hoveredIndex, setHoveredIndex] = useState(null);
 
+
+
+  
+
   const [formFields, setFormFields] = useState(
     JSON.parse(localStorage.getItem("formFields")) || [
       { type: "text", value: "", key: 0 },
@@ -287,7 +291,6 @@ const Forms = () => {
             />
           </div>
         ))}
-
         <div className="flex justify-center">
           <button
             type="submit"
