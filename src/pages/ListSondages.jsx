@@ -75,7 +75,10 @@ const ListSondages = () => {
                 });
 
                 // Mettre à jour les sondages en ajoutant les nouveaux au début
-                setSondages((prevSondages) => [...userSondages, ...prevSondages]);
+                setSondages((prevSondages) => [
+                  ...userSondages,
+                  ...prevSondages,
+                ]);
 
                 // Inverser l'ordre des sondages pour placer les nouveaux en premier
                 setSondages((prevSondages) => [...prevSondages].reverse());
