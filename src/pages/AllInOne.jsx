@@ -10,6 +10,12 @@ const AllInOne = () => {
         <ul className="flex justify-center space-x-4 ms-4 mt-20">
           <li>
             <Link
+              to="/sondages"
+              className="text-gray-400 font-bold hover:text-gray-600 focus:text-gray-600 mx-3"
+            >
+              Retour
+            </Link>
+            <Link
               to={`/resultats/${sondageId}`}
               className="text-gray-400 font-bold hover:text-gray-600 focus:text-gray-600"
             >
@@ -26,7 +32,7 @@ const AllInOne = () => {
           </li>
           <li>
             <Link
-              to={`/share-link/${sondageId}`} 
+              to={`/share-link/${sondageId}`}
               className="text-gray-400 font-bold hover:text-gray-600 focus:text-gray-600"
             >
               Liens
