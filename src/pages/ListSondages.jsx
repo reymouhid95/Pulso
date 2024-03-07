@@ -22,11 +22,12 @@ const ListSondages = () => {
   const lienSondagesStockes = useSelector(selectLienSondageStockes);
   const dispatch = useDispatch();
 
+  const tokenAccess = localStorage.getItem("accessToken");
   useEffect(() => {
     const fetchData = async () => {
-      if (token && isMounted.current) {
+      if (tokenAccess && isMounted.current) {
         try {
-          const userSondages = await getSondages(token, userId);
+          const userSondages = await getSondages(tokenAccess, userId);
 
           const filteredSondageIds = lienSondagesStockes
             .filter((s) =>
@@ -83,7 +84,7 @@ const ListSondages = () => {
       }
     };
 
-    if (token) {
+    if (tokenAccess) {
       fetchData();
     } else {
       console.error("Token pas disponible");
@@ -92,7 +93,7 @@ const ListSondages = () => {
     return () => {
       isMounted.current = false;
     };
-  }, [token, userId, dispatch]);
+  }, [tokenAccess, userId, dispatch]);
 
   const handleClick = (sondageId) => {
     navigate(`/resultats/${sondageId}`);
