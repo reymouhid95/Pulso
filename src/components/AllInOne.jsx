@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const AllInOne = () => {
   const { sondageId } = useParams();
@@ -11,9 +12,9 @@ const AllInOne = () => {
           <li>
             <Link
               to="/sondages"
-              className="text-gray-400 font-bold hover:text-gray-600 focus:text-gray-600 mx-3"
+              className="text-gray-400 font-bold hover:text-gray-600 focus:text-gray-600 mr-5"
             >
-              Retour
+              <ArrowBackIcon />
             </Link>
             <Link
               to={`/resultats/${sondageId}`}

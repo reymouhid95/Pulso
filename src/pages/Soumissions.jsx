@@ -9,7 +9,7 @@ import {
   selectUserId,
   setToken,
 } from "../components/features/AuthSlice";
-import AllInOne from "./AllInOne";
+import AllInOne from "../components/AllInOne";
 import { useParams } from "react-router-dom";
 import LinearProgress from "@mui/material/LinearProgress";
 
@@ -110,7 +110,7 @@ const Soumissions = () => {
   if (loading) {
     return (
       <div>
-        <AllInOne />
+        <AllInOne/>
         <LinearProgress />
       </div>
     );
