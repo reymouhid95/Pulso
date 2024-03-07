@@ -6,7 +6,7 @@ import {
   selectToken,
   selectUserId,
 } from "../components/features/AuthSlice";
-import AllInOne from "./AllInOne";
+import AllInOne from "../components/AllInOne";
 import { useParams } from "react-router-dom";
 import LinearProgress from "@mui/material/LinearProgress";
 

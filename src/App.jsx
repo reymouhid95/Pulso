@@ -16,7 +16,7 @@ import ShareLink from "./pages/ShareLink";
 import SondageVote from "./pages/SondageVote";
 import PageAfterVote from "./pages/PageAfterVote";
 import ListSondages from "./pages/ListSondages";
-import AllInOne from "./pages/AllInOne";
+import AllInOne from "./components/AllInOne";
 import Soumissions from "./pages/Soumissions";
 
 function App() {
