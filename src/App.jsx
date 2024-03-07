@@ -16,8 +16,8 @@ import ShareLink from "./pages/ShareLink";
 import SondageVote from "./pages/SondageVote";
 import PageAfterVote from "./pages/PageAfterVote";
 import ListSondages from "./pages/ListSondages";
-import AllInOne from "./pages/AllInOne";
 import Soumissions from "./pages/Soumissions";
+import AllInOne from "./components/AllInOne";
 
 function App() {
   const router = createBrowserRouter(
