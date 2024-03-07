@@ -20,7 +20,7 @@ const AllInOne = () => {
               to={`/resultats/${sondageId}`}
               className="text-gray-400 font-bold hover:text-gray-600 focus:text-gray-600"
             >
-              Résultats
+              Résultat
             </Link>
           </li>
           <li>
@@ -28,7 +28,7 @@ const AllInOne = () => {
               to={`/soumissions/${sondageId}`}
               className="text-gray-400 font-bold hover:text-gray-600 focus:text-gray-600"
             >
-              Soumissions
+              Soumission
             </Link>
           </li>
           <li>
@@ -36,7 +36,7 @@ const AllInOne = () => {
               to={`/share-link/${sondageId}`}
               className="text-gray-400 font-bold hover:text-gray-600 focus:text-gray-600"
             >
-              Liens
+              Lien
             </Link>
           </li>
         </ul>

@@ -36,11 +36,9 @@ const ListSondages = () => {
 
           console.log(" Sondage Ids:", filteredSondageIds);
 
-          // Mettre à jour les sondages en ajoutant les nouveaux au début
-          setSondages((prevSondages) => [...userSondages, ...prevSondages]);
+          const updatedSondages = [...userSondages, ...sondages];
 
-          // Inverser l'ordre des sondages pour placer les nouveaux en premier
-          setSondages((prevSondages) => [...prevSondages].reverse());
+          setSondages(updatedSondages.reverse());
 
           setLoading(false);
         } catch (error) {
@@ -59,16 +57,11 @@ const ListSondages = () => {
               );
 
               if (newAccessToken) {
-                const userSondages = await getSondages(token, userId);
+                const userSondages = await getSondages(newAccessToken, userId);
 
-                // Mettre à jour les sondages en ajoutant les nouveaux au début
-                setSondages((prevSondages) => [
-                  ...userSondages,
-                  ...prevSondages,
-                ]);
+                const updatedSondages = [...userSondages, ...sondages];
 
-                // Inverser l'ordre des sondages pour placer les nouveaux en premier
-                setSondages((prevSondages) => [...prevSondages].reverse());
+                setSondages(updatedSondages.reverse());
               } else {
                 console.error("Token pas disponible");
               }
@@ -119,7 +112,9 @@ const ListSondages = () => {
             <ul className="list-none text-gray-700 text-base">
               <li>{survey.question}</li>
             </ul>
-            <p className="text-gray-500 mt-2">Pulso-Submissions</p>
+            <p className="text-gray-500 mt-2">
+              Voir le résultat, la soumission et le lien de votre sondage
+            </p>
           </div>
         ))}
       </div>

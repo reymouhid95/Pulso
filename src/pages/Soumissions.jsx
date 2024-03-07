@@ -110,7 +110,7 @@ const Soumissions = () => {
   if (loading) {
     return (
       <div>
-        <AllInOne/>
+        <AllInOne />
         <LinearProgress />
       </div>
     );
