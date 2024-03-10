@@ -1,16 +1,20 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  logout,
   refreshAccessTokenAsync,
   selectToken,
   selectUserId,
 } from "../components/features/AuthSlice";
 import AllInOne from "../components/AllInOne";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import LinearProgress from "@mui/material/LinearProgress";
+import { Toaster, toast } from "sonner";
 
 const SondageResults = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [result, setResult] = useState({});
   const [question, setQuestion] = useState("");
@@ -87,6 +91,11 @@ const SondageResults = () => {
           setLoading(false);
         } else {
           console.error("Error lors du rafraichissement du token");
+          toast.error("Votre session a expiré. Veuillez vous reconnecter!");
+          dispatch(logout());
+          setTimeout(() => {
+            navigate("/connexion");
+          }, 2000);
         }
       }
     }
@@ -179,6 +188,7 @@ const SondageResults = () => {
 
   return (
     <div>
+      <Toaster position="top-left" />
       <AllInOne />
       <div className="mt-40 flex-col mb-10">
         <h1 className="text-gray-500 text-4xl font-black mb-10 text-center">

@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-vars */
 import { useRef, useState, useEffect } from "react";
-import axios from "axios";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
@@ -19,6 +18,7 @@ import {
   setSondageId,
 } from "../components/features/SondageSlices";
 import CircularProgress from "@mui/material/CircularProgress";
+import { postSondage } from "../components/services/SondageServices";
 
 const Forms = () => {
   const [token] = useState(useSelector(selectToken));
@@ -28,10 +28,6 @@ const Forms = () => {
   const dispatch = useDispatch();
   const [lastFieldIndex, setLastFieldIndex] = useState(0);
   const [hoveredIndex, setHoveredIndex] = useState(null);
-
-
-
-  
 
   const [formFields, setFormFields] = useState(
     JSON.parse(localStorage.getItem("formFields")) || [
@@ -110,10 +106,14 @@ const Forms = () => {
 
     try {
       setLoading(true);
-      const res = await submitForm({
-        question: formTitle,
-        options: formFields.map((field) => field.value),
-      });
+      const res = await postSondage(
+        {
+          question: formTitle,
+          options: formFields.map((field) => field.value),
+        },
+        token,
+        userId
+      );
 
       if (res && res.status === 201) {
         const { slug, id: sondageId, owner: userId } = res.data;
@@ -155,10 +155,14 @@ const Forms = () => {
           );
 
           if (newAccessToken) {
-            const res = await submitForm({
-              question: formTitle,
-              options: formFields.map((field) => field.value),
-            });
+            const res = await postSondage(
+              {
+                question: formTitle,
+                options: formFields.map((field) => field.value),
+              },
+              token,
+              userId
+            );
 
             if (res && res.status === 201) {
               const { slug, id: sondageId, owner: userId } = res.data;
@@ -197,37 +201,6 @@ const Forms = () => {
       } else {
         setLoading(false);
       }
-    }
-  };
-
-  const submitForm = async (formData) => {
-    try {
-      const owner = userId;
-
-      if (!owner) {
-        console.error(
-          "Utilisateur pas connecté, Impossible de créer le Sondage"
-        );
-        return;
-      }
-
-      formData.owner = owner;
-
-      const res = await axios.post(
-        "https://pulso-backend.onrender.com/api/sondages/",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      return res;
-    } catch (error) {
-      console.error("Error:", error);
-      throw error;
     }
   };
 
