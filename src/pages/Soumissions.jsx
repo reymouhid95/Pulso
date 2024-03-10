@@ -1,19 +1,23 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { selectLienSondageStockes } from "../components/features/SondageSlices";
 import {
+  logout,
   refreshAccessTokenAsync,
   selectToken,
   selectUserId,
   setToken,
 } from "../components/features/AuthSlice";
 import AllInOne from "../components/AllInOne";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import LinearProgress from "@mui/material/LinearProgress";
+import { Toaster, toast } from "sonner";
 
 const Soumissions = () => {
+  const navigate = useNavigate();
   const [soumissions, setSoumissions] = useState([]);
   const [question, setQuestion] = useState("");
   const [loading, setLoading] = useState(true);
@@ -66,7 +70,6 @@ const Soumissions = () => {
             const refreshResponse = await dispatch(refreshAccessTokenAsync());
             const newAccessToken = refreshResponse.payload.access;
             localStorage.setItem("accessToken", newAccessToken);
-
             dispatch(
               setToken({
                 access: newAccessToken,
@@ -92,6 +95,11 @@ const Soumissions = () => {
               setQuestion(sondageResponse.data.question);
             } else {
               console.error("Erreur lors du rafraichissement du token");
+              toast.error("Votre session a expiré. Veuillez vous reconnecter!");
+              dispatch(logout());
+              setTimeout(() => {
+                navigate("/connexion");
+              }, 2000);
             }
           } else {
             console.error("Erreur:", error);
@@ -140,6 +148,7 @@ const Soumissions = () => {
 
   return (
     <div className="flex text-center gap-12 mb-12 flex-col font-sans">
+      <Toaster position="top-left" />
       <AllInOne />
       <h1 className="text-gray-500 text-4xl font-bold mt-10 text-center">
         {question}

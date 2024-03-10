@@ -1,7 +1,9 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  logout,
   refreshAccessTokenAsync,
   selectToken,
   selectUserId,
@@ -11,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { selectLienSondageStockes } from "../components/features/SondageSlices";
 import LinearProgress from "@mui/material/LinearProgress";
 import { getSondages } from "../components/services/SondageServices";
+import { toast } from "sonner";
 
 const ListSondages = () => {
   const [sondages, setSondages] = useState([]);
@@ -48,7 +51,6 @@ const ListSondages = () => {
               const refreshResponse = await dispatch(refreshAccessTokenAsync());
               const newAccessToken = refreshResponse.payload.access;
               localStorage.setItem("accessToken", newAccessToken);
-
               dispatch(
                 setToken({
                   access: newAccessToken,
@@ -71,6 +73,11 @@ const ListSondages = () => {
                 "Erreur lors du rafraîchissement du token:",
                 refreshError
               );
+              toast.error("Votre session a expiré. Veuillez vous reconnecter!");
+              dispatch(logout());
+              setTimeout(() => {
+                navigate("/connexion");
+              }, 2000);
             } finally {
               setLoading(false);
             }
