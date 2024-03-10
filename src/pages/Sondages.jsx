@@ -1,11 +1,16 @@
 import { useState, useEffect, useRef } from "react";
-import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { refreshAccessTokenAsync, selectToken, selectUserId, setToken } from "../components/features/AuthSlice";
+import {
+  refreshAccessTokenAsync,
+  selectToken,
+  selectUserId,
+  setToken,
+} from "../components/features/AuthSlice";
 import { useNavigate } from "react-router";
 import { selectLienSondageStockes } from "../components/features/SondageSlices";
 import LinearProgress from "@mui/material/LinearProgress";
 import { useParams } from "react-router-dom";
+import { getSondages } from "../components/services/SondageServices";
 
 const Sondages = () => {
   const [sondages, setSondages] = useState([]);
@@ -24,18 +29,7 @@ const Sondages = () => {
     const fetchData = async () => {
       if (token && isMounted.current) {
         try {
-          const response = await axios.get(
-            "https://pulso-backend.onrender.com/api/sondages/",
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-
-          const userSondages = response.data.filter((survey) => {
-            return survey.owner === parseInt(userId);
-          });
+          const userSondages = await getSondages(token, userId);
 
           const filteredSondageIds = lienSondagesStockes
             .filter((s) =>
@@ -65,19 +59,7 @@ const Sondages = () => {
               );
 
               if (newAccessToken) {
-                // fetchData();
-                const res = await axios.get(
-                  "https://pulso-backend.onrender.com/api/sondages/",
-                  {
-                    headers: {
-                      Authorization: `Bearer ${newAccessToken}`,
-                    },
-                  }
-                );
-
-                const userSondages = res.data.filter((survey) => {
-                  return survey.owner === parseInt(userId);
-                });
+                const userSondages = await getSondages(token, userId);
 
                 const filteredSondageIds = lienSondagesStockes
                   .filter((s) =>

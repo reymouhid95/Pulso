@@ -1,7 +1,9 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from "react";
-import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  logout,
   refreshAccessTokenAsync,
   selectToken,
   selectUserId,
@@ -10,6 +12,8 @@ import {
 import { useNavigate } from "react-router-dom";
 import { selectLienSondageStockes } from "../components/features/SondageSlices";
 import LinearProgress from "@mui/material/LinearProgress";
+import { getSondages } from "../components/services/SondageServices";
+import { toast } from "sonner";
 
 const ListSondages = () => {
   const [sondages, setSondages] = useState([]);
@@ -21,22 +25,12 @@ const ListSondages = () => {
   const lienSondagesStockes = useSelector(selectLienSondageStockes);
   const dispatch = useDispatch();
 
+  const tokenAccess = localStorage.getItem("accessToken");
   useEffect(() => {
     const fetchData = async () => {
-      if (token && isMounted.current) {
+      if (tokenAccess && isMounted.current) {
         try {
-          const response = await axios.get(
-            "https://pulso-backend.onrender.com/api/sondages/",
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-
-          const userSondages = response.data.filter((survey) => {
-            return survey.owner === parseInt(userId);
-          });
+          const userSondages = await getSondages(tokenAccess, userId);
 
           const filteredSondageIds = lienSondagesStockes
             .filter((s) =>
@@ -46,11 +40,9 @@ const ListSondages = () => {
 
           console.log(" Sondage Ids:", filteredSondageIds);
 
-          // Mettre à jour les sondages en ajoutant les nouveaux au début
-          setSondages((prevSondages) => [...userSondages, ...prevSondages]);
+          const updatedSondages = [...userSondages, ...sondages];
 
-          // Inverser l'ordre des sondages pour placer les nouveaux en premier
-          setSondages((prevSondages) => [...prevSondages].reverse());
+          setSondages(updatedSondages.reverse());
 
           setLoading(false);
         } catch (error) {
@@ -59,7 +51,6 @@ const ListSondages = () => {
               const refreshResponse = await dispatch(refreshAccessTokenAsync());
               const newAccessToken = refreshResponse.payload.access;
               localStorage.setItem("accessToken", newAccessToken);
-
               dispatch(
                 setToken({
                   access: newAccessToken,
@@ -69,27 +60,11 @@ const ListSondages = () => {
               );
 
               if (newAccessToken) {
-                const res = await axios.get(
-                  "https://pulso-backend.onrender.com/api/sondages/",
-                  {
-                    headers: {
-                      Authorization: `Bearer ${newAccessToken}`,
-                    },
-                  }
-                );
+                const userSondages = await getSondages(newAccessToken, userId);
 
-                const userSondages = res.data.filter((survey) => {
-                  return survey.owner === parseInt(userId);
-                });
+                const updatedSondages = [...userSondages, ...sondages];
 
-                // Mettre à jour les sondages en ajoutant les nouveaux au début
-                setSondages((prevSondages) => [
-                  ...userSondages,
-                  ...prevSondages,
-                ]);
-
-                // Inverser l'ordre des sondages pour placer les nouveaux en premier
-                setSondages((prevSondages) => [...prevSondages].reverse());
+                setSondages(updatedSondages.reverse());
               } else {
                 console.error("Token pas disponible");
               }
@@ -98,6 +73,11 @@ const ListSondages = () => {
                 "Erreur lors du rafraîchissement du token:",
                 refreshError
               );
+              toast.error("Votre session a expiré. Veuillez vous reconnecter!");
+              dispatch(logout());
+              setTimeout(() => {
+                navigate("/connexion");
+              }, 2000);
             } finally {
               setLoading(false);
             }
@@ -111,7 +91,7 @@ const ListSondages = () => {
       }
     };
 
-    if (token) {
+    if (tokenAccess) {
       fetchData();
     } else {
       console.error("Token pas disponible");
@@ -120,7 +100,7 @@ const ListSondages = () => {
     return () => {
       isMounted.current = false;
     };
-  }, [token, userId, dispatch]);
+  }, [tokenAccess, userId, dispatch]);
 
   const handleClick = (sondageId) => {
     navigate(`/resultats/${sondageId}`);
@@ -140,7 +120,9 @@ const ListSondages = () => {
             <ul className="list-none text-gray-700 text-base">
               <li>{survey.question}</li>
             </ul>
-            <p className="text-gray-500 mt-2">Pulso-Submissions</p>
+            <p className="text-gray-500 mt-2">
+              Voir le résultat, la soumission et le lien de votre sondage
+            </p>
           </div>
         ))}
       </div>
