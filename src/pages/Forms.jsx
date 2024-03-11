@@ -73,7 +73,7 @@ const Forms = () => {
         value: "",
         key: formFields.length,
         fieldType: fieldType,
-      }, // Stockez le type de champ pour chaque nouvel élément ajouté
+      },
     ];
     setFormFields(newFields);
     setLastFieldIndex(newFields.length - 1);
@@ -233,8 +233,8 @@ const Forms = () => {
             value={fieldType}
             onChange={(e) => setFieldType(e.target.value)}
           >
-            <option value="text">Texte</option>
-            <option value="textarea">Textarea</option>
+            <option value="text">Option</option>
+            <option value="textarea">Question</option>
           </select>
         </div>
         {formFields.map((field, index) => (
@@ -268,7 +268,7 @@ const Forms = () => {
             >
               <AddRoundedIcon />
             </button>
-            {field.fieldType === "textarea" ? ( // Utilisez le type stocké pour chaque champ
+            {field.fieldType === "textarea" ? (
               <textarea
                 ref={index === lastFieldIndex ? inputRef : null}
                 placeholder="Question du formulaire"
