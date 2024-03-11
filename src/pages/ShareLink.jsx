@@ -1,10 +1,17 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-import { selectToken, selectUserId } from "../components/features/AuthSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  selectToken,
+  selectUserId,
+  refreshAccessTokenAsync,
+  setToken,
+  logout,
+} from "../components/features/AuthSlice";
 import { selectLienSondageStockes } from "../components/features/SondageSlices";
 import { Toaster, toast } from "sonner";
 import AllInOne from "../components/AllInOne";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
 const ShareLink = () => {
@@ -14,6 +21,8 @@ const ShareLink = () => {
   const [copiedIndex, setCopiedIndex] = useState(null);
   const [question, setQuestion] = useState("");
   const { sondageId } = useParams();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchQuestion = async () => {
@@ -36,7 +45,35 @@ const ShareLink = () => {
 
         setQuestion(sondageResponse.data.question);
       } catch (error) {
-        console.error("Erreur:", error);
+        if (error.response.status === 401) {
+          const refreshResponse = await dispatch(refreshAccessTokenAsync());
+          const newAccessToken = refreshResponse.payload.access;
+          localStorage.setItem("accessToken", newAccessToken);
+          dispatch(
+            setToken({
+              access: newAccessToken,
+              user_id: localStorage.getItem("user_id"),
+              expiry: refreshResponse.payload.expiry,
+            })
+          );
+          const sondageResponse = await axios.get(
+            `https://pulso-backend.onrender.com/api/sondages/${sondageId}/`,
+            {
+              headers: {
+                Authorization: `Bearer ${newAccessToken}`,
+              },
+            }
+          );
+
+          setQuestion(sondageResponse.data.question);
+        } else {
+          console.error("Erreur lors du rafraichissement du token");
+          toast.error("Votre session a expiré. Veuillez vous reconnecter!");
+          dispatch(logout());
+          setTimeout(() => {
+            navigate("/connexion");
+          }, 2000);
+        }
       }
     };
 
