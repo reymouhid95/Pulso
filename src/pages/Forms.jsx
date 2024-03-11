@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useRef, useState, useEffect } from "react";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -28,6 +27,7 @@ const Forms = () => {
   const dispatch = useDispatch();
   const [lastFieldIndex, setLastFieldIndex] = useState(0);
   const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [fieldType, setFieldType] = useState("text");
 
   const [formFields, setFormFields] = useState(
     JSON.parse(localStorage.getItem("formFields")) || [
@@ -68,7 +68,12 @@ const Forms = () => {
   const addField = () => {
     const newFields = [
       ...formFields,
-      { type: "text", value: "", key: formFields.length },
+      {
+        type: fieldType,
+        value: "",
+        key: formFields.length,
+        fieldType: fieldType,
+      },
     ];
     setFormFields(newFields);
     setLastFieldIndex(newFields.length - 1);
@@ -222,6 +227,16 @@ const Forms = () => {
             onKeyDown={handleTextareaSubmit}
           ></textarea>
         </div>
+        <div className="mb-4">
+          <select
+            id="fieldType"
+            value={fieldType}
+            onChange={(e) => setFieldType(e.target.value)}
+          >
+            <option value="text">Option</option>
+            <option value="textarea">Question</option>
+          </select>
+        </div>
         {formFields.map((field, index) => (
           <div
             key={field.key}
@@ -253,15 +268,26 @@ const Forms = () => {
             >
               <AddRoundedIcon />
             </button>
-            <input
-              ref={index === lastFieldIndex ? inputRef : null}
-              type={field.type}
-              placeholder="Contenu du formulaire"
-              value={field.value}
-              onChange={(e) => handleFieldChange(index, e)}
-              className="w-full px-2 border-b border-gray-300 font-bold focus:outline-none focus:border-gray-400 rounded text-gray-500"
-              required
-            />
+            {field.fieldType === "textarea" ? (
+              <textarea
+                ref={index === lastFieldIndex ? inputRef : null}
+                placeholder="Question du formulaire"
+                value={field.value}
+                onChange={(e) => handleFieldChange(index, e)}
+                className="w-full px-2 border-b border-gray-300 font-bold focus:outline-none focus:border-gray-400 rounded text-gray-500"
+                required
+              ></textarea>
+            ) : (
+              <input
+                ref={index === lastFieldIndex ? inputRef : null}
+                type="text"
+                placeholder="Option du formulaire"
+                value={field.value}
+                onChange={(e) => handleFieldChange(index, e)}
+                className="w-full px-2 border-b border-gray-300 font-bold focus:outline-none focus:border-gray-400 rounded text-gray-500"
+                required
+              />
+            )}
           </div>
         ))}
         <div className="flex justify-center">
