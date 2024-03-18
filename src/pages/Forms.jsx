@@ -227,16 +227,6 @@ const Forms = () => {
             onKeyDown={handleTextareaSubmit}
           ></textarea>
         </div>
-        <div className="mb-4">
-          <select
-            id="fieldType"
-            value={fieldType}
-            onChange={(e) => setFieldType(e.target.value)}
-          >
-            <option value="text">Option</option>
-            <option value="textarea">Question</option>
-          </select>
-        </div>
         {formFields.map((field, index) => (
           <div
             key={field.key}
