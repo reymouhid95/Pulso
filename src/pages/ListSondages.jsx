@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from "react";
@@ -24,8 +25,8 @@ const ListSondages = () => {
   const userId = useSelector(selectUserId);
   const lienSondagesStockes = useSelector(selectLienSondageStockes);
   const dispatch = useDispatch();
-
   const tokenAccess = localStorage.getItem("accessToken");
+
   useEffect(() => {
     const fetchData = async () => {
       if (tokenAccess && isMounted.current) {
