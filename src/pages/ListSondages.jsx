@@ -1,6 +1,5 @@
-/* eslint-disable react/no-unescaped-entities */
-/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-vars */
 import { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -25,8 +24,8 @@ const ListSondages = () => {
   const userId = useSelector(selectUserId);
   const lienSondagesStockes = useSelector(selectLienSondageStockes);
   const dispatch = useDispatch();
-  const tokenAccess = localStorage.getItem("accessToken");
 
+  const tokenAccess = localStorage.getItem("accessToken");
   useEffect(() => {
     const fetchData = async () => {
       if (tokenAccess && isMounted.current) {
@@ -114,7 +113,7 @@ const ListSondages = () => {
         <hr className="pb-4" />
         {sondages.length === 0 ? (
           <div className="text-gray-700">
-            Vous n'avez pas de sondages disponibles.
+            Aucun sondage trouvé. Veuillez en créer un.
           </div>
         ) : (
           sondages.map((survey) => (
